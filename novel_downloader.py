@@ -339,12 +339,23 @@ class NovelDownloader:
         print(f"耗时: {end_time - start_time:.2f} 秒")
 
 if __name__ == "__main__":
-    target_url = input("请输入小说目录下载地址 (例如: https://k.biqu68.com/book/3953/):\n")
-    if not target_url:
-        print("地址不能为空")
+    # 优先从命令行参数获取 URL (适配 GitHub Actions)
+    if len(sys.argv) > 1:
+        input_str = sys.argv[1]
     else:
-        # 简单的补全
-        if not target_url.startswith('http'):
+        input_str = input("请输入小说目录下载地址或ID (例如: https://k.biqu68.com/book/3953/ 或 3953):\n")
+
+    if not input_str:
+        print("地址/ID不能为空")
+    else:
+        target_url = input_str.strip()
+        
+        # 如果是纯数字，补全为笔趣阁URL
+        if target_url.isdigit():
+             target_url = f"https://k.biqu68.com/book/{target_url}/"
+             print(f"检测到输入为ID，已自动补全为: {target_url}")
+        # 简单的补全 http
+        elif not target_url.startswith('http'):
             target_url = 'https://' + target_url
             
         dl = NovelDownloader(target_url)
