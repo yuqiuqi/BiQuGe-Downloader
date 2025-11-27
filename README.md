@@ -1,2 +1,40 @@
-# BiQuGe-Downloader
-A multi-threaded Python novel downloader for BiQuGe, featuring automatic dependency installation and anti-detection mechanisms.
+# Novel Downloader (小说下载器)
+
+这是一个基于 Python 的多线程小说下载工具，专为下载笔趣阁（及同类结构站点）小说而设计。
+
+## ✨ 功能特点
+
+- **🚀 多线程并发**：使用线程池实现高速下载。
+- **🛠 自动环境配置**：脚本启动时自动检测并安装缺失的依赖库 (`requests`, `bs4`, `lxml`)。
+- **🛡 智能防爬虫**：
+  - 随机 User-Agent 伪装。
+  - 请求头模拟（Referer, Accept 等）。
+  - 随机延时机制，模拟真实用户行为。
+- **📖 智能解析**：
+  - 自动处理章节内分页（检测“下一页”并合并内容）。
+  - 自动识别网页编码，防止乱码。
+  - 自动去除广告内容。
+- **📂 便捷保存**：自动在脚本同级目录下生成小说 TXT 文件。
+
+## 📦 依赖要求
+
+- Python 3.6+
+- 脚本会自动安装以下库：
+  - `requests`
+  - `beautifulsoup4`
+  - `lxml`
+
+## 🚀 使用方法
+
+1. 克隆仓库或下载 `novel_downloader.py` 文件。
+2. 直接运行脚本：
+   ```bash
+   python novel_downloader.py
+   ```
+3. 根据提示输入小说目录页地址（例如：`https://k.biqu68.com/book/xxxx/`）。
+4. 等待下载完成，文件将保存在当前目录下。
+
+## ⚠️ 免责声明
+
+本项目仅供学习和技术交流使用。请勿用于商业用途，请尊重版权，支持正版小说。
+
