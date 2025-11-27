@@ -59,7 +59,10 @@ python novel_downloader.py https://k.biqu68.com/book/3953/
 3. 选择左侧的 **Novel Downloader**。
 4. 点击右侧的 **Run workflow**。
 5. 在输入框中输入 **小说 ID** (如 `3953`) 或完整链接。
-6. 运行完成后，在 **Artifacts** 区域下载生成的 TXT 文件。
+6. 等待任务运行显示 ✅ 成功。
+7. 点击该次运行记录，滑动到底部找到 **Artifacts** 区域。
+8. 点击 **novel-text-file**，浏览器会自动下载一个 ZIP 压缩包。
+9. 解压该 ZIP 文件，即可获得小说的 TXT 文本文件。
 
 ## ⚠️ 免责声明
 
