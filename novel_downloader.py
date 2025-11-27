@@ -94,6 +94,10 @@ class NovelDownloader:
                 self.novel_name = title.split('_')[0] if '_' in title else title
 
             print(f"正在分析小说: 《{self.novel_name}》")
+            
+            # 调试信息：打印页面标题，确认是否被拦截
+            if soup.title:
+                print(f"页面标题: {soup.title.get_text().strip()}")
 
             chapters = []
             
@@ -274,8 +278,9 @@ class NovelDownloader:
         
         chapters = self.get_download_url()
         if not chapters:
-            print("未找到章节，程序结束。")
-            return
+            print("未找到章节，程序结束。可能网站结构变更或IP被封锁。")
+            # 退出代码 1，通知 GitHub Actions 任务失败
+            sys.exit(1)
 
         total_chapters = len(chapters)
         print(f"共发现 {total_chapters} 章，准备开始下载...")
