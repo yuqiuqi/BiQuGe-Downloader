@@ -78,11 +78,14 @@ class NovelDownloader:
         获取小说章节目录和链接
         """
         try:
-            response = self.session.get(self.target_url, timeout=10)
+            response = self.session.get(self.target_url, timeout=15)
+            print(f"HTTP状态码: {response.status_code}")
+            
             # 自动识别编码
             response.encoding = response.apparent_encoding
             
-            soup = BeautifulSoup(response.text, 'lxml')
+            # 尝试使用 html.parser，它比 lxml 对不规范 HTML 容错性更好
+            soup = BeautifulSoup(response.text, 'html.parser')
             
             # 获取小说标题
             info_div = soup.find('div', class_='info')
@@ -90,8 +93,16 @@ class NovelDownloader:
                  self.novel_name = info_div.find('h2').get_text().strip()
             else:
                 # 备选方案，从 title 获取
-                title = soup.find('title').get_text()
-                self.novel_name = title.split('_')[0] if '_' in title else title
+                title_tag = soup.find('title')
+                if title_tag:
+                    title = title_tag.get_text()
+                    self.novel_name = title.split('_')[0] if '_' in title else title
+                else:
+                    # 如果连标题都找不到，可能是被拦截了或者页面为空
+                    self.novel_name = "未知小说"
+                    print("警告: 无法找到网页标题，可能被反爬拦截。")
+                    print(f"响应内容预览: {response.text[:500]}")
+                    return []
 
             print(f"正在分析小说: 《{self.novel_name}》")
             
