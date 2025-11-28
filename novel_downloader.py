@@ -298,7 +298,10 @@ class NovelDownloader:
         
         # 获取脚本所在目录，确保文件保存在脚本同级目录下
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_dir, f"{self.novel_name}.txt")
+        
+        # 清洗文件名，去除非法字符 (如 /, \, :, *, ?, ", <, >, |) 以避免文件路径错误
+        safe_novel_name = re.sub(r'[\\/*?:"<>|]', '_', self.novel_name)
+        file_path = os.path.join(script_dir, f"{safe_novel_name}.txt")
         
         if os.path.exists(file_path):
             os.remove(file_path)
