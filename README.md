@@ -49,7 +49,7 @@
 python novel_downloader.py 3953
 
 # 使用 URL 下载
-python novel_downloader.py https://k.biqu68.com/book/3953/
+python novel_downloader.py https://xxxxxxx.com/book/3953/
 ```
 
 ### 方式三：GitHub Actions (云端运行)
