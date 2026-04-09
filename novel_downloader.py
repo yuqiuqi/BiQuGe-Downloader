@@ -34,7 +34,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 """
 类说明: 下载《笔趣看》网小说
-目标 URL: https://k.biqu68.com/ (或其他同类笔趣阁站点)
+目标 URL: https://m.bqg92.com/ (或其他同类笔趣阁站点)
 优化内容: 
 1. 替换 urllib 为 requests
 2. 增加多线程并发下载
@@ -117,7 +117,7 @@ class NovelDownloader:
             import re
             
             # 从 target_url 提取 book_id (例如 36560)
-            # https://k.biqu68.com/book/36560/
+            # https://m.bqg92.com/book/36560/
             book_id_match = re.search(r'/book/(\d+)', self.target_url)
             if not book_id_match:
                 print("错误: 无法从URL中解析小说ID")
@@ -143,7 +143,7 @@ class NovelDownloader:
                 if not href.startswith('http'):
                      if not href.startswith('/'):
                          href = '/' + href
-                     domain = "https://k.biqu68.com"
+                     domain = "https://m.bqg92.com"
                      if self.target_url.startswith('http'):
                          # 提取域名
                          parsed_uri = requests.utils.urlparse(self.target_url)
@@ -362,7 +362,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         input_str = sys.argv[1]
     else:
-        input_str = input("请输入小说目录下载地址或ID (例如: https://k.biqu68.com/book/3953/ 或 3953):\n")
+        input_str = input("请输入小说目录下载地址或ID (例如: https://m.bqg92.com/book/3953/ 或 3953):\n")
 
     if not input_str:
         print("地址/ID不能为空")
@@ -371,7 +371,7 @@ if __name__ == "__main__":
         
         # 如果是纯数字，补全为笔趣阁URL
         if target_url.isdigit():
-             target_url = f"https://k.biqu68.com/book/{target_url}/"
+             target_url = f"https://m.bqg92.com/book/{target_url}/"
              print(f"检测到输入为ID，已自动补全为: {target_url}")
         # 简单的补全 http
         elif not target_url.startswith('http'):
