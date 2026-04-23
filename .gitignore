@@ -205,3 +205,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# 小说下载默认输出在仓库根目录《书名》.txt（勿提交）
+/*.txt
+!requirements.txt
+!requirements-dev.txt
