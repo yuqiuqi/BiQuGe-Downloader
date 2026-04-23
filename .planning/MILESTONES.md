@@ -27,13 +27,18 @@
 
 ---
 
-## v1.3 — 类水印残留与清洗·二期 (active)
+## v1.3 — 类水印残留与清洗·二期 (closed)
 
 **开始:** 2026-04-24  
-**目标:** 在已有 `text_clean` 规则上，针对**仍可见的类水印/源站固定噪音**做**二期可测清洗**；完成 **CFG-01**；可选 **E2E-01**。详见 `.planning/PROJECT.md` 与 `ROADMAP.md` Phase 11+。  
-
-*关闭本里程碑时在此补充 shipped / metrics。*
+**关闭:** 2026-04-24  
+**已交付 (SHIPPED `v1.3`):**  
+- **CLEAN-03 / Phase 11** — `11-INVENTORY.md`、变体单测与 `text_clean`/`README` 锚点；不扩大无据正则，以可回归单测收束。  
+- **CFG-01 / Phase 12** — `novel_downloader` 中 `resolve_max_workers`；CLI `-j`/`--workers`；`BQUGE_MAX_WORKERS`；默认 10 线程、上限 64；`tests/test_novel_workers.py`；README「并发」与 `pytest` 全绿。  
+**归档:** `.planning/milestones/v1.3-ROADMAP.md`、`.planning/milestones/v1.3-REQUIREMENTS.md`  
+**本版未做（留待后续）:** **E2E-01 / Phase 13**（HTML 回退一书对照）— 仍为**可选**；已写入新 `REQUIREMENTS.md` 候选项。  
+**Known 流程注记 at close:** `11-UAT.md` 未完整对话式验收闭环；以各 `*-SUMMARY.md` 与 `pytest` 为交付主证据。  
+**Known deferred items at close: 1**（可选 E2E-01）— 见 `STATE.md` 与新版 `REQUIREMENTS.md`  
 
 ---
 
-*GSD: new-milestone 于 2026-04-23 创建本文件；历史 roadmap 大段保留在 git 中。*
+*GSD: new-milestone 于 2026-04-23 创建本文件；v1.3 于 2026-04-24 关闭并归档。*  

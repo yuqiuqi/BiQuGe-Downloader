@@ -2,30 +2,18 @@
 
 **Core Value:** 稳定、可复现地从用户给定的目录页，下载并合并**完整、可读**的章节正文到本地或 CI Artifact（见 `PROJECT.md`）
 
-## v1.0 / v1.1 / v1.2（历史摘要）
+## 范围说明
 
-- v1.0、v1.1 与 v1.2 中 **CLEAN-01/02、MAIN-01/02** 等 — 见 `MILESTONES.md` 与下表 **Traceability** 已完成项。
+本文件在 **v1.3 里程碑于 2026-04-24 收束** 后已重置。上一版完整追溯与 v1.3 勾选项见 **`.planning/milestones/v1.3-REQUIREMENTS.md`**。下一里程碑的需求与编号由 **`/gsd-new-milestone`** 正式落盘后再在此补全。
 
----
+## 从 v1.3 承继的候选项（尚未经新里程碑采纳）
 
-## v1.3（本里程碑 — active）
-
-### 正文类水印与噪音（二期）
-
-- [x] **CLEAN-03**: 在 Phase 8 已落实的清洗基线上，**继续减少**成书全文仍可见的**类水印/推广行/源站固定短行噪音**；每条新规则或调整须有**可运行单测或黄金/合成用例** — Phase 11 以盘点 + 变体单测/文档锚点收束（见 `11-INVENTORY` / `11-SUMMARY`）
-
-### 可配置
-
-- [x] **CFG-01**: 下载并发线程数可通过 **CLI 参数**或**环境变量**配置；`README` 与/或 `--help` 说明默认值、合理边界及与历史「约 10 线程」的兼容关系（Phase 12，见 `12-SUMMARY.md`）
-
-### 可选
-
-- [ ] **E2E-01**: 至少对 **HTML 目录回退** 路径做一书抽样或全本下载，记录与 apibi/默认路径对照（章数、乱码、版式、残留行类型）。
+- [ ] **E2E-01**: 至少对 **HTML 目录回退** 路径做一书抽样或全本下载，记录与 apibi/默认路径对照（原 ROADMAP **Phase 13** 描述；不强制联网 CI）。  
 
 ## v2+（暂缓）
 
-- **CFG-02**: 大文件/超大章时的流式或分批落盘（`CONCERNS`）
-- **SITE-01**: 可插拔站点配置
+- **CFG-02**: 大文件/超大章时的流式或分批落盘（`CONCERNS`）  
+- **SITE-01**: 可插拔站点配置  
 
 ## Out of Scope
 
@@ -36,20 +24,11 @@
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| PACK-01, PACK-02 | v1.0 P1 | Complete |
-| TEST-01, TEST-02 | v1.0 P2 | Complete |
-| TXT-01, TXT-02 | v1.1 P5 等 | Complete |
-| CLEAN-01 | 8 | Complete |
-| CLEAN-02 | 8 | Complete |
-| MAIN-01, MAIN-02 | 9 | Complete |
-| CLEAN-03 | 11 | Complete（见 `11-SUMMARY.md`） |
-| CFG-01 | 12 | Complete（`12-SUMMARY.md`） |
-| E2E-01 | **13** 可选，或合并验证任务 | Pending |
-
-**Coverage (v1.3):** 必做 **CLEAN-03、CFG-01 已完成**；可选 E2E-01 仍待 Phase 13。  
+| Requirement | Status | 备注 |
+|-------------|--------|------|
+| 上一里程碑 (v1.3) 必做项 | Complete | 见 `milestones/v1.3-REQUIREMENTS.md` |
+| E2E-01 | **Pending** | 是否纳入下一里程碑，由 `gsd-new-milestone` 定 |
 
 ---
 
-*Last updated: 2026-04-24 — milestone v1.3 需求定义*  
+*Last updated: 2026-04-24 — after v1.3 milestone close (requirements reset)*  

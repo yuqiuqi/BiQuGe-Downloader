@@ -1,75 +1,53 @@
 # Roadmap: BiQuGe Downloader
 
-## Overview
+## Milestones
 
-**当前里程碑: v1.3 — 类水印残留与清洗·二期**（自 Phase **11** 起接续 v1.2 的 Phase 1–10 编号，**不**重置旧目录；旧阶段目录仍保留在 `.planning/phases/` 供溯源）。
+- ✅ **v1.3 — 类水印残留与清洗·二期** — Phases **11–12**（必做 CLEAN-03、CFG-01 已 SHIPPED **2026-04-24**） — 全量见 **`.planning/milestones/v1.3-ROADMAP.md`**
+- 📋 **下一段** — 未命名下一里程碑；候选 **`/gsd-new-milestone`** 承接，或从下方 **Phase 13（可选 E2E-01）** 继续
 
-- **v1.0 / v1.1 / 已完成的 v1.2 工作** 见 **`.planning/MILESTONES.md`** 与下表历史注记。  
-- **v1.2 未交付的 CFG-01** 与 **仍见类水印** 的诉求 — **在 v1.3 中实施**（Phase 11 = 清洗二期，Phase 12 = 并发可配）。  
+**编号约定:** 阶段目录仍按 **11+** 延续（与 v1.2 的 1–10 不重置）；历史阶段见 `.planning/phases/` 与 `MILESTONES.md`。
 
-## Phases (v1.3)
+## Phases (当前焦点)
 
-- [x] **Phase 11: 类水印/噪音二期（text_clean）** — CLEAN-03（`11-SUMMARY.md`）  
-- [x] **Phase 12: 可配置并发** — CFG-01（`12-SUMMARY.md`）  
 - [ ] **Phase 13:（可选）HTML 回退 E2E 记录** — E2E-01  
 
-## Phase Details
-
-### Phase 11: 类水印/噪音二期
-
-**Goal:** 针对用户或抽测中**仍成段/成行出现的类水印、推广或固定源站短行**，在 `text_clean` 中扩展或收紧规则，并以 `tests/test_text_clean.py`（及必要时摘段）**防止误伤**已锁定的合法正文。  
-**Depends on:** v1.2 Phase 8/9 已合入的清洗与 `novel_downloader` 集成方式不变  
-**Requirements:** CLEAN-03  
-**Success Criteria (what must be TRUE):**
-
-1. 对**已记录的残留形态**（或本阶段新增的复现用例）在默认清洗路径下可测地减少或消除  
-2. 回归：`pytest` 全绿；既有黄金用例/Phase 8 相关断言**不降级**（除非经文档说明的刻意变更）  
-3. `raw=True` 行为与 `README` 一致或已同步更新说明  
-
-**Plans:** `11-01` + `11-02` 已执行（`11-INVENTORY.md` / 单测变体 + `text_clean` / `README` 注记）  
-**UI hint:** no  
-
-### Phase 12: 可配置并发
-
-**Goal:** 用户可配置并发度，免改 `novel_downloader` 内硬编码。  
-**Depends on:** Phase 11 推荐先合入，以免大段并发与清洗同时难 bisect；逻辑上可只依赖 v1.0+ 下载能力  
-**Requirements:** CFG-01  
-**Success Criteria (what must be TRUE):**
-
-1. 通过 CLI 或环境变量可设置 `max_workers`（或等效名），有默认值与合理边界说明  
-2. `README` 或 `--help` 中说明该选项  
-3. 默认与当前 10 线程行为兼容，或在文档中显式说明行为变化及迁移注意  
-
-**Plans:** 单次落实（`novel_downloader` + 单测 + README；见 `12-SUMMARY`）  
-**UI hint:** no  
-
-### Phase 13:（可选）HTML 回退 E2E 记录
+## Phase 13:（可选）HTML 回退 E2E 记录
 
 **Goal:** 一书走 HTML 目录解析，记录与 apibi 路径在章数/版式/残留上的差异，阻塞项进 issue/backlog。  
-**Requirements:** E2E-01  
+**Requirements:** E2E-01（见 `REQUIREMENTS.md` 候选项）  
 **Success Criteria (what must be TRUE):** 有**可复现的**书记录与结论段落（可放在 `.planning/phases/999.*` 或 `codebase` 注记），不强制自动化联网 CI。  
 **UI hint:** no  
+
+## Progress (rolling)
+
+| Phase | Theme | Milestone | Status | Note |
+|-------|--------|-----------|--------|------|
+| 11 | 类水印/噪音二期 | v1.3 | Complete | `11-SUMMARY.md` |
+| 12 | 可配置并发 | v1.3 | Complete | `12-SUMMARY.md` |
+| 13 | E2E HTML | TBD | Not started | 可选，待下一里程碑定 |
+
+## Shipped: v1.3（摘要）
+
+<details>
+<summary>v1.3 — Phases 11–12（2026-04-24）</summary>
+
+- [x] **Phase 11** — CLEAN-03；盘点 `11-INVENTORY`、变体单测、`text_clean` / `README` 注记。  
+- [x] **Phase 12** — CFG-01；`novel_downloader` `-j`/`--workers`、`BQUGE_MAX_WORKERS`、默认 10 线程兼容。  
+
+</details>
 
 ## Backlog
 
 ### Phase 999.1: apibi 正文水印与 BOM 跟进
 
-**状态:** **已 promote 为 v1.2 Phase 8**；技术细节以 `.planning/phases/999.1-apibi-watermark-bom/E2E-2026-04-23.md` 为溯源。新残留形态见 **CLEAN-03 / Phase 11**。
+**状态:** **已 promote 为 v1.2 Phase 8**；技术细节以 `.planning/phases/999.1-apibi-watermark-bom/E2E-2026-04-23.md` 为溯源。新残留形态在 v1.3 中由 **CLEAN-03 / Phase 11** 以单测与文档收束。  
 
 **Plans:** 0 plans（关闭）
 
-## Progress (v1.3)
+## Historical
 
-| Phase | Theme | Status | Note |
-|-------|--------|--------|------|
-| 11 | 类水印/噪音二期 | Complete | 见 `11-SUMMARY.md` |
-| 12 | 可配置并发 | Complete | 见 `12-SUMMARY.md` |
-| 13 |（可选）E2E HTML | Not started | E2E-01 |
-
-## Historical — v1.2 及更早（只读参考）
-
-- Phase 8–9 及此前阶段说明见 `MILESTONES.md` 与 git 历史。  
+- v1.2 及更早阶段说明见 **`MILESTONES.md`** 与 `milestones/v1.3-ROADMAP.md` 内「Historical — v1.2 及更早」或 git 历史。  
 
 ---
 
-*Last updated: 2026-04-24 — Phase 12（CFG-01）已 Complete*  
+*Last updated: 2026-04-24 — v1.3 milestone archived; current roadmap slim*  
