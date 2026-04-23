@@ -17,10 +17,10 @@
 - ✓ 单章多页时跟随「下一页」合并（`get_chapter_content`）— 已存在
 - ✓ 随机 User-Agent、Referer 与短随机延时等基础防爬头（`NovelDownloader.__init__` / `get_chapter_content`）— 已存在
 - ✓ GitHub Actions 手动输入 ID/URL 并上传 `*.txt`（`.github/workflows/manual_download.yml`）— 已存在
+- ✓ 根目录 `requirements.txt` 与 `manual_download` workflow、`README` 推荐安装路径一致（Phase 1）— 已验证
 
 ### Active
 
-- [ ] 用声明式依赖（如 `requirements.txt`）与 CI 使用同一套安装源，减少「脚本内 pip 自举」带来的不确定性
 - [ ] 引入可自动化运行的测试（如 pytest）并在 CI 中执行
 - [ ] 清理或接入未使用的 `save_to_file`、并在零章节时提供明确错误/诊断信息（见 `CONCERNS.md`）
 - [ ] 并发度等关键参数可配置（CLI 或环境变量），避免硬编码
