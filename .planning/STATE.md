@@ -19,15 +19,15 @@ progress:
 See: .planning/PROJECT.md（**v1.3**）
 
 **Core value:** 稳定、可复现、可读的全书 TXT（本地或 CI）  
-**Current focus:** v1.3 — **Phase 11 已完成**；下一候选：**Phase 12**（CFG-01）  
+**Current focus:** v1.3 — **Phase 11 执行完毕，UAT 进行中**（`11-UAT.md`）；通过后进入 **Phase 12**（CFG-01）  
 
 ## Current Position
 
 Milestone: **v1.3 类水印残留与清洗·二期**  
 Phase: **11** — **已执行**（`11-INVENTORY` + `11-02` 加固/文档；见 `11-SUMMARY.md`）  
 Plan: `11-01` → `11-02`（均 Complete）  
-Status: **Complete**（Phase 11）  
-Last activity: 2026-04-24 — `/gsd-execute-phase 11`；pytest 29 passed  
+Status: **待 UAT 收束**（执行与摘要已完成）  
+Last activity: 2026-04-24 — `/gsd-next` → 启动 `11-UAT.md`（`/gsd-verify-work 11` 等价流）  
 
 ## Performance Metrics
 
