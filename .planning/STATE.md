@@ -1,16 +1,15 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.2
-milestone_name: 源站正文洁净与工程收尾
-status: planning
-last_updated: "2026-04-23T12:00:00.000Z"
-last_activity: 2026-04-23 — new-milestone v1.2 initialized
+milestone_name: milestone
+status: completed
+last_updated: "2026-04-23T06:33:50.556Z"
+last_activity: 2026-04-23 — `/gsd-new-milestone` 写入 PROJECT / REQUIREMENTS / ROADMAP
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
-  percent: 0
 ---
 
 # Project State
@@ -53,5 +52,5 @@ Last activity: 2026-04-23 — `/gsd-new-milestone` 写入 PROJECT / REQUIREMENTS
 
 ## Session Continuity
 
-Last session: 2026-04-23  
+Last session: 2026-04-23T06:33:50.552Z
 Resume: `.planning/REQUIREMENTS.md`、`.planning/phases/999.1-apibi-watermark-bom/E2E-2026-04-23.md`  
