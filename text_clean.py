@@ -36,10 +36,15 @@ def _line_is_spam_line(line: str) -> bool:
 # 文本级替换（非 raw）
 # ---------------------------------------------------------------------------
 
+# apibi E2E（2026-04 等）：jqxs/gctxt 族为源站固定推广尾缀，按词根锚定以降低误伤正文
 _INLINE_NOISE: List[Tuple[str, str]] = [
     (r"bqfun\s*⊕\s*cc", ""),
     (r"bqfun\s*⊕\s*c\s*c", ""),
     (r"\s*⊕\s*cc", ""),
+    (r"jqxs\s*⊙\s*cc", ""),
+    (r"jqxs\s*⊙\s*c\s*c", ""),
+    (r"gctxt\s*点\s*cc", ""),
+    (r"gctxt\s*\.\s*cc", ""),
 ]
 
 _compiled_inline: List[Tuple[re.Pattern, str]] = [
@@ -56,6 +61,11 @@ def _apply_inline_replacements(text: str) -> str:
 
 def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def _strip_feff(text: str) -> str:
+    """Remove U+FEFF (BOM / ZWNBSP misused as line noise) only."""
+    return text.replace("\ufeff", "")
 
 
 def _collapse_excessive_newlines(text: str) -> str:
@@ -79,13 +89,15 @@ def _filter_lines(text: str, raw: bool) -> str:
 
 def clean_chapter_text(text: str, raw: bool = False) -> str:
     """
-    对单章正文做清洗。``raw=True`` 时不移除营销内容，仅统一换行符（及 harmless 规范化）。
+    对单章正文做清洗。raw=True 时不移除行内/行级营销规则，但会做换行统一并去掉 U+FEFF（BOM 类
+    噪声字节，见 Phase 8）；默认路径另应用 _INLINE / 行滤等规则。
 
     失败提示类短句应由调用方避免传入；如传入，仍做换行统一，不做行删以免误伤。
     """
     if not isinstance(text, str):
         text = str(text)
     t = _normalize_newlines(text)
+    t = _strip_feff(t)
     if raw:
         return t.rstrip() + "\n" if t.strip() else t
 

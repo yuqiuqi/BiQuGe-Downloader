@@ -76,7 +76,7 @@ python novel_downloader.py 3953
 python novel_downloader.py https://xxxxxxx.com/book/3953/
 ```
 
-**正文清洗（默认开启）**：从 apibi 或 HTML 拉取的章节正文会经 `text_clean` 做常见推广水印/噪音行处理（如行内 `bqfun ⊕cc` 类、独立营销短行、仅含 `/read/<数字>/` 的行等）。**不需要清洗**时二选一：命令行加 `--raw-text`，或设置环境变量 `export BQUGE_RAW_TEXT=1`（`true` / `on` 等同理）。多章写入 TXT 时，首章前不额外空行、章与章之间以少量空行分隔。
+**正文清洗（默认开启）**：从 apibi 或 HTML 拉取的章节正文会经 `text_clean` 做常见推广水印/噪音行处理（如行内 `bqfun ⊕cc` 类、独立营销短行、仅含 `/read/<数字>/` 的行等）。**不需要清洗**时二选一：命令行加 `--raw-text`，或设置环境变量 `export BQUGE_RAW_TEXT=1`（`true` / `on` 等同理）。**raw 模式仍会**统一换行并去除 UTF-8 BOM 类字符（U+FEFF），但**不**应用行内/行级营销清洗。多章写入 TXT 时，首章前不额外空行、章与章之间以少量空行分隔。
 
 ### 方式三：GitHub Actions (云端运行)
 

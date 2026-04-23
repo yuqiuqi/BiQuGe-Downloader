@@ -23,8 +23,8 @@
 
 ### 正文深度洁净（E2E / 999.1 promote）
 
-- [ ] **CLEAN-01**: 对正文（apibi 与 HTML 拉取后统一）剥离行首/段级 **U+FEFF**（BOM/ZWNBSP）及同类「仅噪声」的不可见前缀，不破坏用户可见叙事；`raw=True` 时行为在 README/代码中可预期（至少保留或明确不剥离）
-- [ ] **CLEAN-02**: 覆盖 apibi 抽测中高频水印形态（如 `jqxs` + `⊙` + `cc`、`gctxt` + `点cc` 等**固定**推广串），**需** 黄金用例/合成单测，并记录「不得误伤」的合法正文边界（可引用 E2E 与人工抽样结论）
+- [x] **CLEAN-01**: 对正文（apibi 与 HTML 拉取后统一）剥离行首/段级 **U+FEFF**（BOM/ZWNBSP）及同类「仅噪声」的不可见前缀，不破坏用户可见叙事；`raw=True` 时行为在 README/代码中可预期（至少保留或明确不剥离）
+- [x] **CLEAN-02**: 覆盖 apibi 抽测中高频水印形态（如 `jqxs` + `⊙` + `cc`、`gctxt` + `点cc` 等**固定**推广串），**需** 黄金用例/合成单测，并记录「不得误伤」的合法正文边界（可引用 E2E 与人工抽样结论）
 
 ### 可维护性与可观测
 
@@ -58,8 +58,8 @@
 | PACK-01, PACK-02 | v1.0 P1 | Complete |
 | TEST-01, TEST-02 | v1.0 P2 | Complete |
 | TXT-01, TXT-02 | v1.1（Phase 5 实现） | Complete（基线；残留见 CLEAN-02） |
-| CLEAN-01 | 8（`08-01-PLAN.md`） | Pending — execute |
-| CLEAN-02 | 8（`08-02-PLAN.md`） | Pending — execute |
+| CLEAN-01 | 8（`08-01-PLAN.md`） | Complete |
+| CLEAN-02 | 8（`08-02-PLAN.md`） | Complete |
 | MAIN-01, MAIN-02 | 9 可维护性与诊断 | Pending |
 | CFG-01 | 10 可配置并发 | Pending |
 | E2E-01 | 8 或独立验证任务；可选 | Pending |

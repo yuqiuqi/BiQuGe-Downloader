@@ -4,13 +4,13 @@ milestone: v1.2
 milestone_name: milestone
 status: executing
 last_updated: "2026-04-23T12:00:00.000Z"
-last_activity: 2026-04-23 — plan-phase 8（08-01 / 08-02）
+last_activity: 2026-04-23 — execute-phase 8 complete
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_plans: 2
+  percent: 33
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (v1.2)
 ## Current Position
 
 Milestone: **v1.2 源站正文洁净与工程收尾**  
-Phase: **8**（计划已写，未执行）  
-Plan: `08-01-PLAN.md` → `08-02-PLAN.md`（wave 1→2）  
-Status: **Planned** — 可执行 `/gsd-execute-phase 8` 或分 wave 执行  
-Last activity: 2026-04-23 — `/gsd-plan-phase 8` 已落盘 08-01 / 08-02
+Phase: **8** — **已完成**  
+Plan: `08-01` / `08-02` 已执行  
+Status: **Complete**（CLEAN-01/02）  
+Last activity: 2026-04-23 — `/gsd-execute-phase 8`
 
 ## Performance Metrics
 
@@ -45,7 +45,7 @@ Last activity: 2026-04-23 — `/gsd-plan-phase 8` 已落盘 08-01 / 08-02
 
 ### Pending Todos
 
-- `/gsd-execute-phase 8` 或 `wave 1` 仅 `08-01`、再 `08-02`
+- Phase **9**（MAIN）或按 ROADMAP 顺序推进
 
 ### Blockers/Concerns
 
