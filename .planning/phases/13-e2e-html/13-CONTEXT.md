@@ -1,7 +1,8 @@
 # Phase 13: HTML 回退 E2E 与可复现记录 - Context
 
 **Gathered:** 2026-04-24  
-**Status:** Ready for plan（无多轮用户交互，依据 v1.4 `ROADMAP` / `REQUIREMENTS`（E2E-01/02）、`novel_downloader.py` 行为与 `999.1` 既有 E2E 体例收束灰区。若需改边界可编辑本文件后再 `/gsd-plan-phase 13`。  
+**Status:** Plans ready（`13-01-PLAN` / `13-02-PLAN` 已落盘；执行 `/gsd-execute-phase 13`）。  
+**Gathered 注记:** 无多轮用户交互，依据 v1.4 `ROADMAP` / `REQUIREMENTS`（E2E-01/02）、`novel_downloader.py` 与 `999.1` E2E 体例收束灰区；若需改边界可编辑本文件或 PLAN。  
 
 <domain>
 ## Phase Boundary
@@ -97,4 +98,4 @@
 
 </code_context>
 
-**Next steps:** `/gsd-plan-phase 13` 生成 `13-01-PLAN` / `13-02-PLAN` 并执行。  
+**Next steps:** `/gsd-execute-phase 13`（Wave 1 → Wave 2）。  
