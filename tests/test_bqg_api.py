@@ -16,6 +16,9 @@ from bqg_api import (
         ("https://a.b.bqg655.cc/#/book/1155/", "1155"),
         ("https://a.b.bqg655.cc/book/1155/6693.html", "1155"),
         ("https://m.bqg92.com/kan/520/", "520"),
+        ("1155", "1155"),
+        ("https://apibi.cc/api/book?id=999", "999"),
+        ("https://foo.bar/page.php?book_id=12&x=1", "12"),
     ],
 )
 def test_parse_book_id_from_url(url, expected):

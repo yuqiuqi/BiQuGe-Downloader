@@ -11,13 +11,17 @@ def normalize_target_url(s: str) -> str:
     """
     将用户输入的目录 ID 或 URL 归一化为可请求的起始地址。
 
-    前置：调用方已对入参做 strip 且非空。行为对齐原脚本：
+    对入参做 ``strip``；若全为数字则视为书号。行为：
     - 全数字则补全为 ``{DEFAULT_HOST_BOOK}/book/{id}/``
     - 否则若无 http 前缀则补全 ``https://``
     - 否则原样返回
     """
+    s = (s or "").strip()
+    if not s:
+        return s
     if s.isdigit():
         return f"{DEFAULT_HOST_BOOK}/book/{s}/"
+    # 全角空格等已 strip；仍可能含前导零或纯数字子串
     if not s.startswith("http"):
         return "https://" + s
     return s

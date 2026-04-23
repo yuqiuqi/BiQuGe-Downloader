@@ -101,115 +101,96 @@ class NovelDownloader:
         """
         if self._use_api and self._api_book_id:
             titles = fetch_chapter_titles_api(self.session, self._api_book_id)
-            if not titles:
-                print("错误: API 未返回章节目录")
-                return []
-            chapters = []
-            for i, title in enumerate(titles, start=1):
-                chapters.append((title, apibi_chapter_token(self._api_book_id, i)))
-            print(f"API 目录共 {len(chapters)} 章")
-            return chapters
+            if titles:
+                chapters = []
+                for i, title in enumerate(titles, start=1):
+                    chapters.append((title, apibi_chapter_token(self._api_book_id, i)))
+                print(f"API 目录共 {len(chapters)} 章")
+                return chapters
+            print("API 未返回章节目录，回退到网页解析…")
+            self._use_api = False
 
+        return self._get_chapters_from_page()
+
+    def _get_chapters_from_page(self):
+        """从目录页 HTML 解析章节链接（传统笔趣阁结构及 /kan/ 等）。"""
         try:
             response = self.session.get(self.target_url, timeout=15)
             print(f"HTTP状态码: {response.status_code}")
-            
-            # 自动识别编码
+
             response.encoding = response.apparent_encoding
-            
-            # 尝试使用 html.parser，它比 lxml 对不规范 HTML 容错性更好
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # 获取小说标题
-            info_div = soup.find('div', class_='info')
-            if info_div and info_div.find('h2'):
-                 self.novel_name = info_div.find('h2').get_text().strip()
+
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            info_div = soup.find("div", class_="info")
+            if info_div and info_div.find("h2"):
+                self.novel_name = info_div.find("h2").get_text().strip()
             else:
-                # 备选方案，从 title 获取
-                title_tag = soup.find('title')
+                title_tag = soup.find("title")
                 if title_tag:
                     title = title_tag.get_text()
-                    self.novel_name = title.split('_')[0] if '_' in title else title
+                    self.novel_name = title.split("_")[0] if "_" in title else title
                 else:
-                    # 如果连标题都找不到，可能是被拦截了或者页面为空
                     self.novel_name = "未知小说"
                     print("警告: 无法找到网页标题，可能被反爬拦截。")
                     print(f"响应内容预览: {response.text[:500]}")
                     return []
 
             print(f"正在分析小说: 《{self.novel_name}》")
-            
-            # 调试信息：打印页面标题，确认是否被拦截
+
             if soup.title:
                 print(f"页面标题: {soup.title.get_text().strip()}")
 
-            chapters = []
-            
-            # 提取所有链接并根据URL特征过滤
-            # 假设章节链接包含 book_id (从target_url提取)
-            import re
-            
-            # 从 target_url 提取 book_id (例如 36560)
-            # https://m.bqg92.com/book/36560/
-            book_id_match = re.search(r'/book/(\d+)', self.target_url)
-            if not book_id_match:
+            book_id = parse_book_id_from_url(self.target_url)
+            if not book_id:
                 print("错误: 无法从URL中解析小说ID")
                 return []
-            
-            book_id = book_id_match.group(1)
-            pattern = re.compile(rf"/book/{book_id}/\d+(_\d+)?\.html")
-            
-            # 查找所有链接
-            all_links = soup.find_all('a', href=True)
-            
+
+            def matches_chapter_href(href: str) -> bool:
+                if not href.endswith(".html"):
+                    return False
+                if f"/book/{book_id}/" in href:
+                    return bool(re.search(r"/\d+\.html$", href))
+                if f"/kan/{book_id}/" in href:
+                    return bool(re.search(r"/\d+\.html$", href))
+                return False
+
+            all_links = soup.find_all("a", href=True)
+
             seen_urls = set()
             temp_chapters = []
 
             for link in all_links:
-                href = link.get('href')
+                href = link.get("href")
                 title = link.get_text().strip()
-                
+
                 if not href or not title:
                     continue
 
-                # 补全 URL
-                if not href.startswith('http'):
-                     if not href.startswith('/'):
-                         href = '/' + href
-                     domain = "https://m.bqg92.com"
-                     if self.target_url.startswith('http'):
-                         # 提取域名
-                         parsed_uri = requests.utils.urlparse(self.target_url)
-                         domain = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
-                     href = domain + href
+                if not href.startswith("http"):
+                    if not href.startswith("/"):
+                        href = "/" + href
+                    domain = "https://m.bqg92.com"
+                    if self.target_url.startswith("http"):
+                        parsed_uri = requests.utils.urlparse(self.target_url)
+                        domain = "{uri.scheme}://{uri.netloc}".format(uri=parsed_uri)
+                    href = domain + href
 
-                # 检查是否是章节链接 (简单的判断: 包含 book_id 且以 .html 结尾)
-                # 这里排除分页链接 (通常分页链接带有 _2.html, 但目录页通常只列出第一页)
-                # 如果目录页直接列出分页链接，我们需要处理
-                if f"/book/{book_id}/" in href and href.endswith('.html'):
-                    # 排除掉类似 index.html 或者其他非章节页面
-                    # 章节通常是纯数字ID
-                    if re.search(r'/\d+\.html$', href): 
-                        if href not in seen_urls:
-                            seen_urls.add(href)
-                            temp_chapters.append((title, href))
+                if matches_chapter_href(href):
+                    if href not in seen_urls:
+                        seen_urls.add(href)
+                        temp_chapters.append((title, href))
 
-            # 排序，为了防止“最新章节”打乱顺序，我们可以尝试按ID排序
-            # 提取ID进行排序
-            def get_id(item):
+            def get_sort_key(item):
                 url = item[1]
-                match = re.search(r'/(\d+)\.html', url)
+                match = re.search(r"/(\d+)\.html", url)
                 return int(match.group(1)) if match else 0
-            
-            temp_chapters.sort(key=get_id)
+
+            temp_chapters.sort(key=get_sort_key)
             chapters = temp_chapters
 
-            # 如果没找到，尝试旧逻辑
             if not chapters:
-                print("未找到符合规则的章节，尝试通用逻辑...")
-                # ... (保留一部分旧逻辑作为fallback?) ... 
-                # 这里简单处理，如果没找到直接返回空
-                pass
+                print("未找到符合规则的章节链接，可能目录结构已变或需使用书号走 API。")
 
             return chapters
 
@@ -252,10 +233,16 @@ class NovelDownloader:
                     req_headers = {'Referer': self.target_url}
                     response = self.session.get(current_url, headers=req_headers, timeout=10)
                     response.encoding = response.apparent_encoding
-                    soup = BeautifulSoup(response.text, 'lxml')
-                    
-                    # 常见的正文 ID 是 content 或 showtxt
-                    content_div = soup.find(id='content') or soup.find(class_='showtxt')
+                    soup = BeautifulSoup(response.text, "lxml")
+
+                    content_div = (
+                        soup.find(id="content")
+                        or soup.find(id="rtext")
+                        or soup.find("div", id="txt")
+                        or soup.find("div", class_="readcontent")
+                        or soup.find("article", class_="readtext")
+                        or soup.find(class_="showtxt")
+                    )
                     
                     if content_div:
                         # 处理换行符，将 <br> 替换为换行

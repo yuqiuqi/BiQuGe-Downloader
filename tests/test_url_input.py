@@ -23,6 +23,10 @@ from url_input import normalize_target_url
             "https://example.com/book/1/",
             "https://example.com/book/1/",
         ),
+        (
+            "  3953  ",
+            "https://m.bqg92.com/book/3953/",
+        ),
     ],
 )
 def test_normalize_target_url(raw, expected):
