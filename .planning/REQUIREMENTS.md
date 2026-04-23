@@ -16,7 +16,7 @@
 
 ### 可配置
 
-- [ ] **CFG-01**: 下载并发线程数可通过 **CLI 参数**或**环境变量**配置；`README` 与/或 `--help` 说明默认值、合理边界及与历史「约 10 线程」的兼容关系。
+- [x] **CFG-01**: 下载并发线程数可通过 **CLI 参数**或**环境变量**配置；`README` 与/或 `--help` 说明默认值、合理边界及与历史「约 10 线程」的兼容关系（Phase 12，见 `12-SUMMARY.md`）
 
 ### 可选
 
@@ -45,10 +45,10 @@
 | CLEAN-02 | 8 | Complete |
 | MAIN-01, MAIN-02 | 9 | Complete |
 | CLEAN-03 | 11 | Complete（见 `11-SUMMARY.md`） |
-| CFG-01 | **12** 可配置并发 | Pending |
+| CFG-01 | 12 | Complete（`12-SUMMARY.md`） |
 | E2E-01 | **13** 可选，或合并验证任务 | Pending |
 
-**Coverage (v1.3):** 2 项必做（CLEAN-03, CFG-01）+ 1 可选 E2E-01，映射 `ROADMAP` Phase 11–13。  
+**Coverage (v1.3):** 必做 **CLEAN-03、CFG-01 已完成**；可选 E2E-01 仍待 Phase 13。  
 
 ---
 

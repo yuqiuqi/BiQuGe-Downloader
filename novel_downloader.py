@@ -43,6 +43,64 @@ from bqg_api import (
 )
 from text_clean import clean_chapter_text
 
+# v1.3 Phase 12 / CFG-01：并发可配置；CLI 与 BQUGE_MAX_WORKERS 见 README「并发」
+DEFAULT_MAX_WORKERS = 10
+MAX_WORKERS_CAP = 64
+MAX_WORKERS_ENV = "BQUGE_MAX_WORKERS"
+
+
+def _parse_env_max_workers() -> int | None:
+    """从环境变量读取并发数；缺省/非法则返回 None（由 resolve 用默认值 10）。"""
+    s = (os.environ.get(MAX_WORKERS_ENV) or "").strip()
+    if not s:
+        return None
+    try:
+        n = int(s, 10)
+    except ValueError:
+        print(
+            f"警告: {MAX_WORKERS_ENV}={s!r} 非有效整数，将使用默认 {DEFAULT_MAX_WORKERS} 线程。",
+            file=sys.stderr,
+        )
+        return None
+    if n < 1:
+        print(
+            f"警告: {MAX_WORKERS_ENV}={n} 小于 1，将使用默认 {DEFAULT_MAX_WORKERS} 线程。",
+            file=sys.stderr,
+        )
+        return None
+    if n > MAX_WORKERS_CAP:
+        print(
+            f"提示: {MAX_WORKERS_ENV}={n} 已超过上限，将使用 {MAX_WORKERS_CAP} 线程。",
+            file=sys.stderr,
+        )
+        return MAX_WORKERS_CAP
+    return n
+
+
+def _clamp_cli_workers(n: int) -> int:
+    if n < 1:
+        raise ValueError(
+            f"并发线程数须为 1~{MAX_WORKERS_CAP} 的整数，当前: {n}"
+        )
+    if n > MAX_WORKERS_CAP:
+        print(
+            f"提示: 并发数已限制为上限 {MAX_WORKERS_CAP}（原值 {n}），以免请求过高。",
+            file=sys.stderr,
+        )
+        return MAX_WORKERS_CAP
+    return n
+
+
+def resolve_max_workers(cli_override: int | None) -> int:
+    """确定线程池大小：显式 CLI 优先，其次环境变量，最后 DEFAULT_MAX_WORKERS。"""
+    if cli_override is not None:
+        return _clamp_cli_workers(cli_override)
+    env_n = _parse_env_max_workers()
+    if env_n is not None:
+        return env_n
+    return DEFAULT_MAX_WORKERS
+
+
 """
 类说明: 下载《笔趣看》网小说
 目标 URL: https://m.bqg92.com/ (或其他同类笔趣阁站点)
@@ -59,8 +117,9 @@ def _env_raw_text() -> bool:
 
 
 class NovelDownloader:
-    def __init__(self, target_url: str, raw_text: object = None):
+    def __init__(self, target_url: str, raw_text: object = None, max_workers: int | None = None):
         self.target_url = target_url
+        self._opt_max_workers = max_workers
         # 使用 Session 保持连接，提高性能
         self.session = requests.Session()
         # 新站：apibi.cc API（与 m.bqg92.com / *bqg655.cc 书号一致时可走此路径）
@@ -379,9 +438,8 @@ class NovelDownloader:
         
         start_time = time.time()
         
-        # 开启线程池下载
         # 建议线程数不要过高，以免被网站封 IP
-        max_workers = 10 
+        max_workers = resolve_max_workers(self._opt_max_workers)
         print(f"正在使用 {max_workers} 个线程并发下载，请稍候...")
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -430,27 +488,72 @@ class NovelDownloader:
         print(f"耗时: {end_time - start_time:.2f} 秒")
 
 if __name__ == "__main__":
+    import argparse
+
     from url_input import normalize_target_url
 
-    argv = list(sys.argv[1:])
-    raw_flag = False
-    if "--raw-text" in argv:
-        raw_flag = True
-        argv = [a for a in argv if a != "--raw-text"]
+    def _parse_workers_cli(s: str) -> int:
+        try:
+            n = int(s, 10)
+        except ValueError as e:
+            raise argparse.ArgumentTypeError("并发数须为整数") from e
+        if n < 1:
+            raise argparse.ArgumentTypeError(
+                f"并发数须为 1~{MAX_WORKERS_CAP} 的整数，当前: {n}"
+            )
+        if n > MAX_WORKERS_CAP:
+            print(
+                f"提示: 并发数已限制为 {MAX_WORKERS_CAP}（原值 {n}）",
+                file=sys.stderr,
+            )
+            return MAX_WORKERS_CAP
+        return n
 
-    if argv:
-        input_str = argv[0]
-    else:
-        input_str = input("请输入小说目录下载地址或ID (例如: https://m.bqg92.com/book/3953/ 或 3953):\n")
+    parser = argparse.ArgumentParser(
+        description="笔趣阁类站点小说多线程下载；并发默认与历史行为一致为 10 线程。",
+    )
+    parser.add_argument(
+        "url",
+        nargs="?",
+        help="书号或目录页 URL（可省略，改为交互输入）",
+    )
+    parser.add_argument(
+        "--raw-text",
+        action="store_true",
+        help="不应用营销水印行清洗，仅换行/去 BOM；亦可设 BQUGE_RAW_TEXT=1",
+    )
+    parser.add_argument(
+        "-j",
+        "--workers",
+        type=_parse_workers_cli,
+        default=None,
+        dest="max_workers",
+        metavar="N",
+        help=f"并发下载线程数；默认 {DEFAULT_MAX_WORKERS}。也可用环境变量 {MAX_WORKERS_ENV}。",
+    )
+    args = parser.parse_args()
 
+    input_str = args.url
     if not input_str:
-        print("地址/ID不能为空")
-    else:
-        target_url = input_str.strip()
-        was_digit = target_url.isdigit()
-        target_url = normalize_target_url(target_url)
-        if was_digit:
-            print(f"检测到输入为ID，已自动补全为: {target_url}")
+        input_str = input(
+            "请输入小说目录下载地址或ID (例如: https://m.bqg92.com/book/3953/ 或 3953):\n"
+        )
 
-        dl = NovelDownloader(target_url, raw_text=raw_flag)
+    if not input_str or not str(input_str).strip():
+        print("地址/ID不能为空")
+        sys.exit(1)
+
+    target_url = str(input_str).strip()
+    was_digit = target_url.isdigit()
+    target_url = normalize_target_url(target_url)
+    if was_digit:
+        print(f"检测到输入为ID，已自动补全为: {target_url}")
+
+    try:
+        dl = NovelDownloader(
+            target_url, raw_text=args.raw_text, max_workers=args.max_workers
+        )
         dl.run()
+    except ValueError as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)

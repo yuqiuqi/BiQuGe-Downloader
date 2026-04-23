@@ -4,7 +4,7 @@
 
 ## ✨ 功能特点
 
-- **🚀 多线程并发**：使用线程池实现高速下载。
+- **🚀 多线程并发**：使用线程池实现高速下载；v1.3 起**并发线程数**可通过命令行或环境变量配置（与历史**默认 10 线程**兼容，见下文「并发」）。
 - **🆔 智能 ID 识别**：直接输入小说 ID（如 `3953`）或完整 URL 即可下载。
 - **📡 新站兼容**：站点跳转到 `*.bqg655.cc` 的 hash 地址时，**无需**在浏览器里复制最终链接；书号在路径、hash、`?id=`、`?book_id=` 或纯数字中均可识别，程序会**自动**走 `apibi` 书库；目录接口失败时会**回退**到传统 HTML 解析。若需指向镜像 API，可设置环境变量 `BQUGE_API_BASE`（完整根路径，如 `https://apibi.cc/api`）。
 - **🛠 环境配置**：推荐用虚拟环境 + `requirements.txt` 预装依赖；**可选**地，直接运行脚本时仍会尝试自动 `pip` 安装缺失包（见 `novel_downloader.py`）。
@@ -75,6 +75,14 @@ python novel_downloader.py 3953
 # 使用 URL 下载
 python novel_downloader.py https://xxxxxxx.com/book/3953/
 ```
+
+**并发（v1.3 / CFG-01）**：下载阶段使用**线程池**；默认与此前版本相同为 **10** 个线程。可用下面任一方式调整：
+
+- 命令行：`-j N` 或 `--workers N`（`N` 为 1~64 的整数，超过上限会自动限制并提示）。示例：`python novel_downloader.py -j 4 3953`
+- 环境变量：`export BQUGE_MAX_WORKERS=4`（仅当**未**在命令行指定 `--workers` / `-j` 时生效）
+- 说明：不设上述选项时，行为与旧版**固定 10 线程**一致，便于与既有脚本/CI 对照。
+
+查看全部选项：`python novel_downloader.py --help`
 
 **正文清洗（默认开启）**：从 apibi 或 HTML 拉取的章节正文会经 `text_clean` 做常见推广水印/噪音行处理（如行内 `bqfun ⊕cc` 类、独立营销短行、仅含 `/read/<数字>/` 的行等）。v1.3 **CLEAN-03** 在既有规则上通过盘点与单测加固（见 `.planning/phases/11-wm2-text-clean/11-INVENTORY.md`）。**不需要清洗**时二选一：命令行加 `--raw-text`，或设置环境变量 `export BQUGE_RAW_TEXT=1`（`true` / `on` 等同理）。**raw 模式仍会**统一换行并去除 UTF-8 BOM 类字符（U+FEFF），但**不**应用行内/行级营销清洗。多章写入 TXT 时，首章前不额外空行、章与章之间以少量空行分隔。
 
