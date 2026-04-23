@@ -32,6 +32,16 @@ import re
 import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from bqg_api import (
+    CHAPTER_URL_PREFIX,
+    apibi_chapter_token,
+    fetch_chapter_text_api,
+    fetch_chapter_titles_api,
+    parse_apibi_chapter_token,
+    parse_book_id_from_url,
+    try_fetch_book_api,
+)
+
 """
 类说明: 下载《笔趣看》网小说
 目标 URL: https://m.bqg92.com/ (或其他同类笔趣阁站点)
@@ -47,6 +57,9 @@ class NovelDownloader:
         self.target_url = target_url
         # 使用 Session 保持连接，提高性能
         self.session = requests.Session()
+        # 新站：apibi.cc API（与 m.bqg92.com / *bqg655.cc 书号一致时可走此路径）
+        self._use_api = False
+        self._api_book_id = None
         
         # 随机 User-Agent 列表
         user_agents = [
@@ -72,11 +85,31 @@ class NovelDownloader:
             'Cache-Control': 'max-age=0',
         })
         self.novel_name = "下载的小说"
-        
+
+        book_id = parse_book_id_from_url(target_url)
+        if book_id:
+            meta = try_fetch_book_api(self.session, book_id)
+            if meta and meta.get("title"):
+                self._use_api = True
+                self._api_book_id = book_id
+                self.novel_name = str(meta["title"]).strip() or self.novel_name
+                print(f"已连接 apibi 书库: 《{self.novel_name}》(id={book_id})，将使用 API 下载正文。")
+
     def get_download_url(self):
         """
         获取小说章节目录和链接
         """
+        if self._use_api and self._api_book_id:
+            titles = fetch_chapter_titles_api(self.session, self._api_book_id)
+            if not titles:
+                print("错误: API 未返回章节目录")
+                return []
+            chapters = []
+            for i, title in enumerate(titles, start=1):
+                chapters.append((title, apibi_chapter_token(self._api_book_id, i)))
+            print(f"API 目录共 {len(chapters)} 章")
+            return chapters
+
         try:
             response = self.session.get(self.target_url, timeout=15)
             print(f"HTTP状态码: {response.status_code}")
@@ -124,7 +157,7 @@ class NovelDownloader:
                 return []
             
             book_id = book_id_match.group(1)
-            pattern = re.compile(f'/book/{book_id}/\d+(\_\d+)?\.html')
+            pattern = re.compile(rf"/book/{book_id}/\d+(_\d+)?\.html")
             
             # 查找所有链接
             all_links = soup.find_all('a', href=True)
@@ -188,6 +221,19 @@ class NovelDownloader:
         """
         下载单个章节内容 (支持分页)
         """
+        if url.startswith(CHAPTER_URL_PREFIX):
+            time.sleep(random.uniform(0.05, 0.2))
+            parsed = parse_apibi_chapter_token(url)
+            if not parsed:
+                return "无法解析此章节地址"
+            bid, ch_idx = parsed
+            for attempt in range(retries):
+                text = fetch_chapter_text_api(self.session, bid, ch_idx)
+                if text is not None:
+                    return text
+                time.sleep(0.5 * (attempt + 1))
+            return "无法解析此章节内容"
+
         # 模拟真实用户行为：随机等待一小段时间，避免请求过于密集
         time.sleep(random.uniform(0.1, 0.3))
 
