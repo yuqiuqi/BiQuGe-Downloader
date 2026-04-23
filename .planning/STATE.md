@@ -1,14 +1,14 @@
 ---
 gsd_state_version: 1.0
-milestone: TBD
-milestone_name: 下一里程碑（未命名）
+milestone: v1.4
+milestone_name: HTML 回退路径 E2E 与可复现记录
 status: planning
 last_updated: "2026-04-24T00:00:00.000Z"
-last_activity: 2026-04-24 — /gsd-complete-milestone v1.3 已归档；REQUIREMENTS 已重置
+last_activity: 2026-04-24 — /gsd-new-milestone v1.4 已落盘；待 discuss/plan Phase 13
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
-  total_plans: 0
+  total_plans: 2
   completed_plans: 0
 ---
 
@@ -16,22 +16,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md（**已更新为 v1.3 后状态**）  
+See: .planning/PROJECT.md（**v1.4**）  
 
 **Core value:** 稳定、可复现、可读的全书 TXT（本地或 CI）  
-**Current focus:** 运行 **`/gsd-new-milestone`** 以命名下一版并写回 `REQUIREMENTS` / `ROADMAP`；或从 `ROADMAP` **Phase 13（E2E-01 可选）** 启动讨论  
+**Current focus:** **Phase 13**（E2E-01 / E2E-02）— HTML 回退与 apibi 一书对照；先 **`/gsd-discuss-phase 13`** 或 **`/gsd-plan-phase 13`**  
 
 ## Current Position
 
-- **v1.3** — SHIPPED 2026-04-24；归档 `.planning/milestones/v1.3-ROADMAP.md`、**`v1.3-REQUIREMENTS.md`**；**tag `v1.3`**。  
-- **下一工作:** 无强制阻塞；E2E-01 为候选项。  
-
-## Deferred items（milestone close 记录）
-
-| Category | Item | Status |
-|----------|------|--------|
-| optional-req | E2E-01 / Phase 13（HTML 回退一书对照） | 写入新版 `REQUIREMENTS.md` 候选项，待下里程碑决定 |
-| process | 完整对话式 UAT 未对 Phase 11 闭合 | 以 `11-SUMMARY` + `pytest` 为交付主证据；`11-UAT.md` 可留档或后补 |  
+Milestone: **v1.4**  
+Phase: **13** — Not started（`13-01` → `13-02` 建议，见 `ROADMAP.md`）  
+Status: **Defining / ready to plan**（需求与路线图已写）  
+Last activity: 2026-04-24 — gsd-new-milestone  
 
 ## Performance Metrics
 
@@ -41,12 +36,17 @@ See: .planning/PROJECT.md（**已更新为 v1.3 后状态**）
 
 ### Decisions
 
-- v1.3 已打 tag；阶段编号不重置，后续仍从 **13** 起接（若做 E2E）。  
+- 本里程碑不重置阶段号；**Phase 13** 承接 v1.3 时 ROADMAP 已公布的 E2E 线。  
+- 领域预研跳过（以现有下载栈与 `novel_downloader` 行为对照为主）。  
+
+### Pending Todos
+
+- 执行 **Phase 13**（E2E 采数 + 结论文档 + README/入口）  
 
 ### Blockers/Concerns
 
-- 无。  
+- 依赖用户网络与站点可用性；**非 CI 强约束**。  
 
 ## Session Continuity
 
-Resume: `ROADMAP.md` → `REQUIREMENTS.md` → `/gsd-new-milestone`  
+Resume: `.planning/ROADMAP.md`（Phase 13） → `.planning/REQUIREMENTS.md`  
