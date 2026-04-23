@@ -1,0 +1,4 @@
+# 与 novel_downloader 及 .github/workflows/manual_download CI 保持同步
+requests>=2.25.0
+beautifulsoup4>=4.9.0
+lxml>=4.6.0

@@ -27,7 +27,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests beautifulsoup4 lxml
+        # 与仓库根 requirements.txt 同步
+        pip install -r requirements.txt
 
     - name: Run Downloader
       run: |

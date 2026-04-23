@@ -6,7 +6,7 @@
 
 - **🚀 多线程并发**：使用线程池实现高速下载。
 - **🆔 智能 ID 识别**：直接输入小说 ID（如 `3953`）或完整 URL 即可下载。
-- **🛠 自动环境配置**：脚本启动时自动检测并安装缺失的依赖库 (`requests`, `bs4`, `lxml`)。
+- **🛠 环境配置**：推荐用虚拟环境 + `requirements.txt` 预装依赖；**可选**地，直接运行脚本时仍会尝试自动 `pip` 安装缺失包（见 `novel_downloader.py`）。
 - **🛡 智能防爬虫**：
   - 随机 User-Agent 伪装。
   - 请求头模拟（Referer, Accept 等）。
@@ -20,18 +20,28 @@
 
 ## 📦 依赖要求
 
-- Python 3.6+
-- 脚本会自动安装以下库：
-  - `requests`
-  - `beautifulsoup4`
-  - `lxml`
+- Python 3.6+（与 GitHub Actions 一致时**建议**使用 Python 3.10）
+- 运行时需要 **requests**、**beautifulsoup4**、**lxml**（在 `requirements.txt` 中声明）
+
+### 推荐安装（与 CI 一致）
+
+在仓库根目录使用虚拟环境安装，与 **GitHub Actions** 使用同一份 `requirements.txt`：
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+# Windows（PowerShell）可使用: .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+**可选**：若不预先安装，脚本仍会尝试自动 `pip` 安装缺失依赖（见 `novel_downloader.py`）。
 
 ## 🚀 使用方法
 
 ### 方式一：本地运行
 
-1. 克隆仓库或下载 `novel_downloader.py` 文件。
-2. 运行脚本：
+1. 克隆仓库或下载 `novel_downloader.py` 文件（完整克隆时推荐先按上文「推荐安装」创建 venv 并执行 `pip install -r requirements.txt`）。
+2. 若已安装依赖，运行脚本：
    ```bash
    python novel_downloader.py
    ```
@@ -53,6 +63,8 @@ python novel_downloader.py https://xxxxxxx.com/book/3953/
 ```
 
 ### 方式三：GitHub Actions (云端运行)
+
+工作流在运行前会从仓库根目录的 `requirements.txt` 安装依赖，与本地推荐方式一致。
 
 1. Fork 本仓库到你的 GitHub。
 2. 点击仓库上方的 **Actions** 标签。

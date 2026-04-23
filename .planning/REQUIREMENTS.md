@@ -7,8 +7,8 @@
 
 ### 依赖与可复现性
 
-- [ ] **PACK-01**: 仓库根目录提供声明式依赖文件（如 `requirements.txt`），列出版本与 CI/本地文档一致
-- [ ] **PACK-02**: `manual_download` workflow 的 `pip install` 与该文件对齐（或显式等价的固定集合）
+- [x] **PACK-01**: 仓库根目录提供声明式依赖文件（如 `requirements.txt`），列出版本与 CI/本地文档一致
+- [x] **PACK-02**: `manual_download` workflow 的 `pip install` 与该文件对齐（或显式等价的固定集合）
 
 ### 质量与验证
 
@@ -42,8 +42,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PACK-01 | Phase 1 | Pending |
-| PACK-02 | Phase 1 | Pending |
+| PACK-01 | Phase 1 | Complete |
+| PACK-02 | Phase 1 | Complete |
 | TEST-01 | Phase 2 | Pending |
 | TEST-02 | Phase 2 | Pending |
 | MAIN-01 | Phase 3 | Pending |
@@ -58,4 +58,4 @@
 ---
 
 *Requirements defined: 2026-04-23*  
-*Last updated: 2026-04-23 after GSD new-project (roadmap mapping)*
+*Last updated: 2026-04-23 after Phase 1 execution (PACK-01/02 complete)*
