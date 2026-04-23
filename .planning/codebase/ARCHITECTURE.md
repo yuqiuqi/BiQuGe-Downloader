@@ -23,8 +23,7 @@
 - `get_chapter_content(url)`: 单章多页循环保底（「下一页」链），去广告片段，重试与 `time.sleep` 防爬
 
 **协调与 I/O 层**
-- `run()`: 调用目录解析 → 线程池 `submit(get_chapter_content)` → `as_completed` 收集到 `results` → 按索引顺序 `open(..., 'a', encoding='utf-8')` 写入整本 TXT
-- 注意: 类中另有 `save_to_file()` 方法，**当前 `run()` 未调用**，为遗留或备用 API
+- `run()`: 调用目录解析 → 线程池 `submit(get_chapter_content)` → `as_completed` 收集到 `results` → 按索引顺序 `open(..., 'a', encoding='utf-8')` 写入整本 TXT；无章节时打印 `_empty_catalog_diagnostics()` 并以退出码 1 结束
 
 ## Data Flow
 

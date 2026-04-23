@@ -11,7 +11,7 @@
 ## Phases (v1.2)
 
 - [x] **Phase 8: 深度清洗与单测** — U+FEFF、apibi 多类水印、黄金用例；可选 E2E-01 在此或并行记录  
-- [ ] **Phase 9: 可维护性与诊断** — MAIN-01, MAIN-02  
+- [x] **Phase 9: 可维护性与诊断** — MAIN-01, MAIN-02  
 - [ ] **Phase 10: 可配置并发** — CFG-01  
 
 ## Phase Details
@@ -72,7 +72,7 @@
 | Phase | Theme | Status | Note |
 |-------|--------|--------|------|
 | 8 | 深度清洗与单测 | Complete | CLEAN-01/02 已落地 |
-| 9 | 可维护性与诊断 | **Planned** | `09-01-PLAN` / `09-02-PLAN`；待 execute |
+| 9 | 可维护性与诊断 | **Complete** | MAIN-01/02 已落地 |
 | 10 | 可配置并发 | Not started | 原 v1.1 P7 |
 | 999.1 |（溯源） | Promoted → 8 | 见上 |
 

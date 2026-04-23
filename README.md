@@ -92,6 +92,10 @@ python novel_downloader.py https://xxxxxxx.com/book/3953/
 8. 点击 **novel-text-file**，浏览器会自动下载一个 ZIP 压缩包。
 9. 解压该 ZIP 文件，即可获得小说的 TXT 文本文件。
 
+## 未找到章节目录时
+
+若程序打印 **未找到可下载的章节目录** 并以**退出码 1** 结束（本地与 GitHub Actions 均如此），请阅读终端中给出的**目标地址、书号、apibi/HTML 路径说明**与（若设置）**BQUGE_API_BASE**，核对书号/URL、在浏览器中打开 `https://m.bqg92.com/book/<书号>/` 是否可见章节、网络/代理后重试。
+
 ## ⚠️ 免责声明
 
 本项目仅供学习和技术交流使用。请勿用于商业用途，请尊重版权，支持正版小说。

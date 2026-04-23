@@ -49,7 +49,7 @@
 ## Naming Patterns
 - 单模块脚本：`novel_downloader.py`（`snake_case`）
 - 类名 `PascalCase`（`NovelDownloader`）
-- 方法如 `get_download_url`, `get_chapter_content`, `run`, `save_to_file` 为 `snake_case`
+- 方法如 `get_download_url`, `get_chapter_content`, `run` 为 `snake_case`
 - 局部变量 `camelCase` 与 `snake_case` 混用较少；多为 `soup`, `chapters`, `response` 等描述性小写
 - 无显式模块级常量枚举；`max_workers = 10` 等写死在 `run()` 内
 - 无下划线约定私有成员
@@ -71,7 +71,7 @@
 - 部分分支保留「未完全实现的 fallback」注释（如目录未匹配时的 `pass`）
 ## Function Design
 - `get_download_url` 与 `get_chapter_content` 体量大、分支多，承担解析与重试
-- `save_to_file` 存在但未被 `run` 使用，易误导读者（见 `CONCERNS.md`）
+- 章节写入仅在 `run()` 内完成（历史 `save_to_file` 已移除，Phase 9）
 ## Module Design
 - 单文件即应用；无 `__all__` 或包级导出
 - 未来若拆包，建议将「站点选择器/解析器」与「线程调度 + 落盘」分离便于测试
@@ -91,7 +91,7 @@
 - `get_download_url()`: 拉目录页、解析 `book_id`、收集章节链接触 `temp_chapters`，按 URL 中章节 id 排序
 - `get_chapter_content(url)`: 单章多页循环保底（「下一页」链），去广告片段，重试与 `time.sleep` 防爬
 - `run()`: 调用目录解析 → 线程池 `submit(get_chapter_content)` → `as_completed` 收集到 `results` → 按索引顺序 `open(..., 'a', encoding='utf-8')` 写入整本 TXT
-- 注意: 类中另有 `save_to_file()` 方法，**当前 `run()` 未调用**，为遗留或备用 API
+- 无章节时 `run()` 打印 `_empty_catalog_diagnostics()` 并以退出码 1 结束（MAIN-02）
 ## Data Flow
 - 多次 GET 同一章的分页，直到无「下一页」或达页数上限
 - 无跨运行持久状态；同一次运行内以内存字典 `results` 保证乱序完成线程仍能顺序落盘

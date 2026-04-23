@@ -15,7 +15,8 @@
 
 **未在 v1.1 内收尾、已转入 v1.2：**
 
-- [ ] **MAIN-01, MAIN-02, CFG-01**（及下列 CLEAN / E2E）
+- [x] **MAIN-01, MAIN-02** — Phase 9  
+- [ ] **CFG-01**（Phase 10）
 
 ---
 
@@ -28,8 +29,8 @@
 
 ### 可维护性与可观测
 
-- [ ] **MAIN-01**: `save_to_file` 死代码被删除、接入 `run()` 路径，或明确弃用并移除（与 `CONCERNS` 一致）
-- [ ] **MAIN-02**: 当未解析到任何章节时，用户可见明确失败原因与下一步建议（非静默空成功）
+- [x] **MAIN-01**: `save_to_file` 死代码被删除、接入 `run()` 路径，或明确弃用并移除（与 `CONCERNS` 一致）— Phase 9
+- [x] **MAIN-02**: 当未解析到任何章节时，用户可见明确失败原因与下一步建议（非静默空成功）— Phase 9
 
 ### 可配置
 
@@ -60,8 +61,8 @@
 | TXT-01, TXT-02 | v1.1（Phase 5 实现） | Complete（基线；残留见 CLEAN-02） |
 | CLEAN-01 | 8（`08-01-PLAN.md`） | Complete |
 | CLEAN-02 | 8（`08-02-PLAN.md`） | Complete |
-| MAIN-01 | 9（`09-01-PLAN.md`） | Pending — execute |
-| MAIN-02 | 9（`09-02-PLAN.md`） | Pending — execute |
+| MAIN-01 | 9（`09-01-PLAN.md`） | Complete |
+| MAIN-02 | 9（`09-02-PLAN.md`） | Complete |
 | CFG-01 | 10 可配置并发 | Pending |
 | E2E-01 | 8 或独立验证任务；可选 | Pending |
 
@@ -69,4 +70,4 @@
 
 ---
 
-*Last updated: 2026-04-24 — Phase 9 plans 09-01, 09-02*  
+*Last updated: 2026-04-24 — Phase 9 executed*  

@@ -15,7 +15,7 @@
 **Target features:**
 
 - ~~正文首/段 U+FEFF 与 apibi 水印~~ — **Phase 8 已完成**（CLEAN-01/02）  
-- **当前工作（Phase 9）：** 删除/统一与 `run()` 冲突的死代码（`save_to_file`），空目录时增强可诊断消息（MAIN-01/02）— 见 `09-CONTEXT`  
+- **Phase 9（MAIN-01/02）：** 已移除 `save_to_file` 并增加无章节目录时的终端诊断与 README 说明  
 - 并发度 CLI/环境变量可配与文档化（**Phase 10 / CFG-01**）
 - （可选）对仅 HTML 目录解析的一本书做抽样/全书 E2E，与 apibi 对照
 
@@ -39,7 +39,8 @@
 ### Active (v1.2)
 
 - [x] **CLEAN-01 / CLEAN-02:** 见 `REQUIREMENTS.md`（BOM/水印深化与单测）— Phase 8 已落地
-- [ ] **MAIN-01/02**、**CFG-01**（自 v1.1 平移）
+- [x] **MAIN-01/02**（Phase 9）  
+- [ ] **CFG-01**（Phase 10）
 - [ ] **E2E-01**（可选）：HTML 回退路径抽样/全书记录
 
 ### Out of Scope
@@ -89,4 +90,4 @@
 
 ---
 
-*Last updated: 2026-04-23 — 新里程碑 v1.2 初始化*  
+*Last updated: 2026-04-24 — Phase 9（MAIN）已完成*  

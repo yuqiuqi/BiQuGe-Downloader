@@ -318,18 +318,33 @@ class NovelDownloader:
             return "下载失败"
         return self._finalize_chapter_text(full_content)
 
-    def save_to_file(self, file_path: str, chapter_title: str, content: str):
-        """
-        写入文件
-        """
-        try:
-            with open(file_path, 'a', encoding='utf-8') as f:
-                f.write(f"\n\n{chapter_title}\n")
-                f.write("-" * 30 + "\n")
-                f.write(content)
-                f.write("\n")
-        except Exception as e:
-            print(f"写入失败: {e}")
+    def _empty_catalog_diagnostics(self) -> str:
+        """无章节时打印的可操作说明（MAIN-02 / Phase 9）。"""
+        lines = [
+            "未找到可下载的章节目录，程序退出。",
+            "",
+            f"· 目标地址: {self.target_url}",
+        ]
+        bid = parse_book_id_from_url(self.target_url)
+        if not bid and self._use_api and self._api_book_id:
+            bid = self._api_book_id
+        if bid:
+            lines.append(f"· 解析书号: {bid}")
+        if self._use_api and self._api_book_id:
+            lines.append("· 已使用 apibi 书库；若 API 无目录已自动尝试回退到 HTML 目录页。")
+        else:
+            lines.append("· 使用 HTML 目录页解析章链（未走 apibi 或 apibi 未返回书信息）。")
+        api_base = (os.environ.get("BQUGE_API_BASE") or "").strip()
+        if api_base:
+            lines.append(f"· BQUGE_API_BASE: {api_base}")
+        lines.extend(
+            [
+                "",
+                "可能原因: 书号/URL 错误；站点或 apibi 目录结构变更；网络不稳定、被限流/封锁。",
+                "建议: 在浏览器打开 `https://m.bqg92.com/book/<书号>/` 确认有章节；检查环境变量 BQUGE_API_BASE；换网络/代理后重试。",
+            ]
+        )
+        return "\n".join(lines)
 
     def run(self):
         print("\n\t\t欢迎使用小说下载小工具 (优化版)\n")
@@ -337,7 +352,7 @@ class NovelDownloader:
         
         chapters = self.get_download_url()
         if not chapters:
-            print("未找到章节，程序结束。可能网站结构变更或IP被封锁。")
+            print(self._empty_catalog_diagnostics())
             # 退出代码 1，通知 GitHub Actions 任务失败
             sys.exit(1)
 

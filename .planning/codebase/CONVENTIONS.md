@@ -9,7 +9,7 @@
 
 **Classes / functions / methods:**
 - 类名 `PascalCase`（`NovelDownloader`）
-- 方法如 `get_download_url`, `get_chapter_content`, `run`, `save_to_file` 为 `snake_case`
+- 方法如 `get_download_url`, `get_chapter_content`, `run` 为 `snake_case`
 - 局部变量 `camelCase` 与 `snake_case` 混用较少；多为 `soup`, `chapters`, `response` 等描述性小写
 
 **Constants:**
@@ -62,7 +62,7 @@
 ## Function Design
 
 - `get_download_url` 与 `get_chapter_content` 体量大、分支多，承担解析与重试
-- `save_to_file` 存在但未被 `run` 使用，易误导读者（见 `CONCERNS.md`）
+- 章节写入**仅**在 `run()` 内完成（历史遗留的独立 `save_to_file` 已移除，见 Phase 9）
 
 ## Module Design
 
