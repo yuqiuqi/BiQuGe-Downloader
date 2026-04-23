@@ -8,6 +8,18 @@
 
 **稳定、可复现地**从用户给定的目录页，下载并合并**完整、可读**的章节正文到本地（或 CI Artifact）。
 
+## Current Milestone: v1.1 输出质量与可维护性
+
+**Goal:** 在保持现有下载与 CI 的前提下，让合并 TXT **少噪音、好排版**（源站广告/水印清洗），并补齐 **可维护性**（死代码/空目录诊断）与 **可配置并发**。
+
+**Target features:**
+
+- 正文与落盘前清洗/版式（含 UAT 记录的推广串与节首空行类问题，见 `.planning/phases/03-content-quality/03-UAT-DOWNLOAD-REPORT.md`）
+- 清理或统一 `save_to_file` 与主写入路径；无章节时明确失败原因
+- 并发线程数可通过参数或环境变量配置并文档化
+
+**Previous milestone (v1.0) 摘要:** 见 `.planning/MILESTONES.md`（依赖/CI、pytest、apibi 等已交付）。
+
 ## Requirements
 
 ### Validated
@@ -20,11 +32,12 @@
 - ✓ 根目录 `requirements.txt` 与 `manual_download` workflow、`README` 推荐安装路径一致（Phase 1）— 已验证
 - ✓ 本地与 CI 可 `pytest`；`url_input.normalize_target_url` 有无网单测；workflow 中先 `test` 后 `download`（Phase 2）— 已验证
 
-### Active
+### Active (v1.1)
 
-- [ ] 清理或接入未使用的 `save_to_file`、并在零章节时提供明确错误/诊断信息（见 `CONCERNS.md`）
-- [ ] 并发度等关键参数可配置（CLI 或环境变量），避免硬编码
-- [ ] 在不大改产品形态的前提下，为解析/HTML 选择器封装可测边界（便于应对站点小改版）
+- [ ] **TXT/排版:** 可开关的正文去水印/尾注清洗与章首/文件头空白处理（UAT 结论）
+- [ ] **MAIN-01/02:** 同 `REQUIREMENTS`/`ROADMAP` Phase 6
+- [ ] **CFG-01:** 可配置 `max_workers` 与文档
+- [ ] 在不大改产品形态的前提下，为清洗与解析层保留可测边界（pytest）
 
 ### Out of Scope
 
@@ -72,4 +85,5 @@
 
 ---
 
-*Last updated: 2026-04-23 after Phase 2 execution (pytest + CI test job)*
+*Last updated: 2026-04-23 — 新里程碑 v1.1 初始化*  
+

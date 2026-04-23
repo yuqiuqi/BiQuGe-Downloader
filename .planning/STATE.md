@@ -1,67 +1,58 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: executing
-stopped_at: Phase 2 执行完成（pytest、url_input、CI test job）
-last_updated: "2026-04-23T12:00:00.000Z"
-last_activity: 2026-04-23 -- Phase 2 execution complete
+milestone: v1.1
+milestone_name: 输出质量与可维护性
+status: planning
+stopped_at: 新里程碑 v1.1 已初始化，待 /gsd-discuss-phase 5 或 /gsd-plan-phase 5
+last_updated: "2026-04-23T10:00:00.000Z"
+last_activity: 2026-04-23 -- new-milestone v1.1
 progress:
-  total_phases: 4
-  completed_phases: 2
-  total_plans: 9
-  completed_plans: 6
-  percent: 50
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-04-23)
+See: .planning/PROJECT.md (v1.1)
 
-**Core value:** 稳定、可复现地合并完整章节 TXT（本地或 CI Artifact）  
-**Current focus:** Phase 3 — 可维护性与错误信息  
+**Core value:** 稳定、可复现、可读的全书 TXT（本地或 CI）  
+**Current focus:** v1.1 — 输出质量、可维护性、可配置并发  
 
 ## Current Position
 
-Phase: 3 of 4 (可维护性与错误信息)
-Plan: Not started
-Status: Ready to plan or execute
-Last activity: 2026-04-23 -- Phase 2 execution complete
-
-Progress: [█████░░░░░] 50%（Phase 1–2 已完成）  
+Milestone: **v1.1 输出质量与可维护性**  
+Phase: **5**（未开始，相对于本里程碑的 Phase 1 of 3）  
+Plan: —  
+Status: **Defining / ready to plan**（规划产物：REQUIREMENTS、ROADMAP 已写）  
+Last activity: 2026-04-23 — `/gsd-new-milestone`  
 
 ## Performance Metrics
 
-**Velocity:** (执行阶段后填写)
+**Velocity:** —  
 
-- Total plans completed: 6  
-- Average duration: —  
-- Total execution time: —  
+- Total plans completed: 0（本里程碑）  
+- v1.0 累计: 6 plans（历史见 MILESTONES）  
 
 ## Accumulated Context
 
 ### Decisions
 
-见 `PROJECT.md` Key Decisions；初始化阶段已记录「维护型里程碑、跳过全库四代理预研」。
+- v1.0 的 Phase 3–4 与 UAT 质量项**合并进 v1.1** 的 Phase 5–7（新编号），不单独保留旧 03-xx 目录要求。
 
 ### Pending Todos
 
-None yet.
+- 从 Phase 5 起执行：`/gsd-discuss-phase 5` 或 `/gsd-plan-phase 5`
 
 ### Blockers/Concerns
 
-技术债与站点耦合见 `.planning/codebase/CONCERNS.md`。
-
-## Deferred Items
-
-| Category | Item | Status | Deferred At |
-|----------|------|--------|-------------|
-| — | — | — | — |
+- `.planning/codebase/CONCERNS.md` 与 UAT 报告
 
 ## Session Continuity
 
 Last session: 2026-04-23  
-Stopped at: Phase 2 执行完成；下一阶段为 Phase 3（MAIN-01/02）  
-Resume file: `.planning/ROADMAP.md`  
+Resume: `.planning/ROADMAP.md` Phase 5  
