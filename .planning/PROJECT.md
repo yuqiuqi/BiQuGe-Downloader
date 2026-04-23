@@ -14,25 +14,23 @@
 
 ## Current Milestone: v1.4 — HTML 回退路径 E2E 与可复现记录
 
-**Goal:** 对**至少一本**书，在可复现前提下对比 **apibi/默认可用路径** 与 **HTML 目录解析/回退** 路径，记录章数、版式/编码观感、类水印或固定噪音**差异**（不追求自动化联网 CI，以人工可复现步骤与落盘报告为主）。  
+**Status:** **Phase 13 已执行**（`13-SUMMARY.md`；结论文档 `E2E-2026-04-24.md`）。**一书（书号 3953）**在 **apibi** 与 **仅 HTML 目录** 下的章数/元数据**差异**已记录；README 已加「路径对照（E2E，v1.4）」入口。  
 
-**Target features:**
+**Target features / 结果:**
 
-- **E2E-01:** 可复现的下载/对照步骤、一书结论（可放在 `.planning/phases/13-*` 或既有 `999.*` 系目录下的 `E2E-*.md`）。  
-- 阻塞或值得跟进的问题**进入 backlog / issue 引用**（在报告中显式列出）。  
-- 视需要在 **README** 或规划文档中增加**一行入口**，指向「如何在本仓库语境下走 HTML 回退/对照」（若 Phase 执行时仍缺）。  
-
-**前序注记:** v1.3 未纳入必做的 **E2E-01** 在本版纳入；**`11-UAT.md`** 若仍存在，可与本里程碑并行关闭或标为已替代（以 SUMMARY+pytest 为主证据的决策不变）。  
+- **E2E-01/02** — 见 `REQUIREMENTS.md`（已勾选）与 `13-e2e-html/` 下 E2E、RUN-RECORD。  
+- 可选：对结论文档做 **tag/Release** 或 **complete-milestone** 归档。  
 
 ## Requirements
 
 ### Validated
 
 - v1.0–v1.3 中已标 Complete 的条目 — 见 `MILESTONES.md` 与各 `*-SUMMARY.md` 及 `milestones/v1.3-REQUIREMENTS.md`。  
+- ✓ **E2E-01 / E2E-02** — v1.4 Phase 13（`13-SUMMARY.md` / `E2E-2026-04-24.md`）  
 
-### Active (v1.4)
+### Active (下一里程碑)
 
-- 以 **`REQUIREMENTS.md`** 中 **E2E-01** 及追溯表为准（本里程碑定稿后更新）。  
+- 由 **`/gsd-new-milestone`** 或 **`REQUIREMENTS.md` 重置后** 定义。  
 
 ### Out of Scope
 
@@ -55,7 +53,7 @@
 
 | Decision | Rationale | Outcome |
 |----------|-----------|--------|
-| v1.4 以 E2E-01 为轴心 | v1.3 已刻意推迟可选 E2E | 进行中，见 Phase 13 |
+| v1.4 以 E2E-01 为轴心 | v1.3 已刻意推迟可选 E2E | ✓ Phase 13 已收束 |
 | 不重置阶段编号，接续 Phase 13 | 与 ROADMAP 已公布编号一致 | 本里程碑使用 **13-01 / 13-02** 计划名 |
 
 ## Evolution
@@ -79,4 +77,4 @@
 
 ---
 
-*Last updated: 2026-04-24 — /gsd-new-milestone v1.4*  
+*Last updated: 2026-04-24 — Phase 13 execute 完成*  

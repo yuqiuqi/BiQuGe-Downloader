@@ -41,10 +41,11 @@
 
 ---
 
-## v1.4 — HTML 回退路径 E2E 与可复现记录 (active)
+## v1.4 — HTML 回退路径 E2E 与可复现记录 (shippable)
 
 **开始:** 2026-04-24  
-**目标:** 落实 **E2E-01**（至少一书在 **HTML 目录回退/解析** 与默认 **apibi** 路径下的可复现对照，结论落盘；不强制联网 CI）。详见 `.planning/ROADMAP.md` **Phase 13** 与 `REQUIREMENTS.md`。  
+**已交付 (Phase 13):** **E2E-01 / E2E-02** — `13-RUN-RECORD.md`、`E2E-2026-04-24.md`（书号 **3953**：apibi **113** 章 vs HTML 目录 **13** 章及元数据差异）、`README`「路径对照」一句；`13-SUMMARY.md`。不强制联网 CI。  
+**可选后续:** 运行 **`/gsd-complete-milestone`** 与 v1.3 同型归档。  
 
 ---
 

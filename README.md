@@ -84,6 +84,8 @@ python novel_downloader.py https://xxxxxxx.com/book/3953/
 
 查看全部选项：`python novel_downloader.py --help`
 
+**路径对照（E2E，v1.4）：** 同一书号在 **apibi 成功** 与 **仅 HTML 目录** 下的可复现命令、日志判据与目录差异见 `.planning/phases/13-e2e-html/E2E-2026-04-24.md`（与上「新站兼容 / `BQUGE_API_BASE`」互补）。  
+
 **正文清洗（默认开启）**：从 apibi 或 HTML 拉取的章节正文会经 `text_clean` 做常见推广水印/噪音行处理（如行内 `bqfun ⊕cc` 类、独立营销短行、仅含 `/read/<数字>/` 的行等）。v1.3 **CLEAN-03** 在既有规则上通过盘点与单测加固（见 `.planning/phases/11-wm2-text-clean/11-INVENTORY.md`）。**不需要清洗**时二选一：命令行加 `--raw-text`，或设置环境变量 `export BQUGE_RAW_TEXT=1`（`true` / `on` 等同理）。**raw 模式仍会**统一换行并去除 UTF-8 BOM 类字符（U+FEFF），但**不**应用行内/行级营销清洗。多章写入 TXT 时，首章前不额外空行、章与章之间以少量空行分隔。
 
 ### 方式三：GitHub Actions (云端运行)

@@ -3,13 +3,13 @@
 ## Milestones
 
 - ✅ **v1.3 — 类水印残留与清洗·二期** — Phases **11–12**（**2026-04-24**） — 见 **`.planning/milestones/v1.3-ROADMAP.md`**
-- 🚧 **v1.4 — HTML 回退路径 E2E 与可复现记录** — **Phase 13**（E2E-01 / E2E-02）**active**
+- ✅ **v1.4 — HTML 回退路径 E2E 与可复现记录** — **Phase 13**（E2E-01 / E2E-02，**2026-04-24**）见 `13-SUMMARY.md`  
 
 **编号约定:** 阶段目录延续 **11+**；**Phase 13** 对应当前里程碑。  
 
 ## Phases (v1.4 — 当前)
 
-- [ ] **Phase 13: HTML 回退 E2E 与可复现记录** — E2E-01, E2E-02  
+- [x] **Phase 13: HTML 回退 E2E 与可复现记录** — E2E-01, E2E-02（`13-SUMMARY.md`）  
 
 ### Phase 13: HTML 回退 E2E 与可复现记录
 
@@ -39,7 +39,7 @@
 |-------|--------|-----------|--------|------|
 | 11 | 类水印/噪音二期 | v1.3 | Complete | `11-SUMMARY.md` |
 | 12 | 可配置并发 | v1.3 | Complete | `12-SUMMARY.md` |
-| 13 | HTML 回退 E2E | **v1.4** | Not started | E2E-01, E2E-02 |
+| 13 | HTML 回退 E2E | **v1.4** | Complete | `13-SUMMARY.md` |
 
 ## Shipped: v1.3（摘要）
 
@@ -48,6 +48,15 @@
 
 - [x] **Phase 11** — CLEAN-03。  
 - [x] **Phase 12** — CFG-01。  
+
+</details>
+
+## Shipped: v1.4（摘要）
+
+<details>
+<summary>v1.4 — Phase 13（2026-04-24）</summary>
+
+- [x] **Phase 13** — E2E-01/02；`E2E-2026-04-24.md` + `13-RUN-RECORD`；README 入口。  
 
 </details>
 
@@ -65,4 +74,4 @@
 
 ---
 
-*Last updated: 2026-04-24 — new-milestone v1.4, Phase 13 active*  
+*Last updated: 2026-04-24 — v1.4 Phase 13 Complete*  
