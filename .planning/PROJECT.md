@@ -8,15 +8,19 @@
 
 **稳定、可复现地**从用户给定的目录页，下载并合并**完整、可读**的章节正文到本地（或 CI Artifact）。
 
-## Current Milestone: v1.1 输出质量与可维护性
+## Current Milestone: v1.2 源站正文洁净与工程收尾
 
-**Goal:** 在保持现有下载与 CI 的前提下，让合并 TXT **少噪音、好排版**（源站广告/水印清洗），并补齐 **可维护性**（死代码/空目录诊断）与 **可配置并发**。
+**Goal:** 在 v1.1 已落地的清洗与版式基线之上，**消除 apibi E2E 与抽测中暴露的残留水印与不可见字符**（BOM ZWNBSP），并以单测/黄金用例防误伤；同时完成 v1.1 Roadmap 中未收尾的 **MAIN**（死代码/零章节诊断）与 **CFG**（可配置并发），可选补充 **HTML 回退** 的抽样 E2E 记录。
 
 **Target features:**
 
-- 正文与落盘前清洗/版式（含 UAT 记录的推广串与节首空行类问题，见 `.planning/phases/03-content-quality/03-UAT-DOWNLOAD-REPORT.md`）
-- 清理或统一 `save_to_file` 与主写入路径；无章节时明确失败原因
-- 并发线程数可通过参数或环境变量配置并文档化
+- 正文首/段 U+FEFF 剥离；扩展 `text_clean`（或等效后处理）覆盖 `jqxs ⊙cc`、`gctxt点cc` 等 apibi 常见模式 — 见 `.planning/phases/999.1-apibi-watermark-bom/E2E-2026-04-23.md`
+- 黄金字符串与 `pytest` 回归，raw 模式与「合法正文」不破坏
+- `save_to_file` / `run()` 路径与死代码；无章节时明确失败与建议（MAIN-01/02）
+- 并发度 CLI/环境变量可配与文档化（CFG-01）
+- （可选）对仅 HTML 目录解析的一本书做抽样/全书 E2E，与 apibi 对照
+
+**上一里程碑 (v1.1) 摘要:** 已交付 `text_clean` 初版、落盘、无网单测、README 清洗说明；E2E 回写 999.1。详见 `MILESTONES.md` 与 v1.1 关闭注记。
 
 **Previous milestone (v1.0) 摘要:** 见 `.planning/MILESTONES.md`（依赖/CI、pytest、apibi 等已交付）。
 
@@ -31,13 +35,13 @@
 - ✓ GitHub Actions 手动输入 ID/URL 并上传 `*.txt`（`.github/workflows/manual_download.yml`）— 已存在
 - ✓ 根目录 `requirements.txt` 与 `manual_download` workflow、`README` 推荐安装路径一致（Phase 1）— 已验证
 - ✓ 本地与 CI 可 `pytest`；`url_input.normalize_target_url` 有无网单测；workflow 中先 `test` 后 `download`（Phase 2）— 已验证
+- ✓ v1.1：`text_clean`、默认清洗与可关 raw、章首/章间落盘、无网 `tests/test_text_clean.py`、README 说明（Phase 5 实现）
 
-### Active (v1.1)
+### Active (v1.2)
 
-- [ ] **TXT/排版:** 可开关的正文去水印/尾注清洗与章首/文件头空白处理（UAT 结论）
-- [ ] **MAIN-01/02:** 同 `REQUIREMENTS`/`ROADMAP` Phase 6
-- [ ] **CFG-01:** 可配置 `max_workers` 与文档
-- [ ] 在不大改产品形态的前提下，为清洗与解析层保留可测边界（pytest）
+- [ ] **CLEAN-01 / CLEAN-02:** 见 `REQUIREMENTS.md`（BOM/水印深化与单测）
+- [ ] **MAIN-01/02**、**CFG-01**（自 v1.1 平移）
+- [ ] **E2E-01**（可选）：HTML 回退路径抽样/全书记录
 
 ### Out of Scope
 
@@ -63,6 +67,7 @@
 |----------|-----------|--------|
 | 本里程碑以「工程化维护」为主，不重新定义产品为 Web 服务 | 与当前 CLI + Actions 形态一致，降低范围 | — Pending |
 | 初始化 GSD 时跳过「全库领域预研」四代理流程 | 加速拿到 ROADMAP；后续可按阶段用 research 工作流补 | — Pending |
+| v1.2 以 E2E-2026-04-23 与 999.1 为需求输入，不重复造调研 | 已有复现与计数；直接进入需求与分阶段 | 2026-04-23 |
 
 ## Evolution
 
@@ -85,5 +90,4 @@
 
 ---
 
-*Last updated: 2026-04-23 — 新里程碑 v1.1 初始化*  
-
+*Last updated: 2026-04-23 — 新里程碑 v1.2 初始化*  

@@ -11,10 +11,19 @@
 
 ---
 
-## v1.1 — 输出质量与可维护性 (active)
+## v1.1 — 输出质量与可维护性 (closed)
 
 **开始:** 2026-04-23  
-**目标:** 可读的合并 TXT、明确失败诊断、可配置并发、代码卫生；与 `PROJECT.md`「Current Milestone」一致。  
+**关闭:** 2026-04-23（转入 v1.2，未实施项由新里程碑承接）  
+**已交付（摘要）:** `text_clean` + `NovelDownloader` 集成、章首/章间落盘、无网 `test_text_clean`、`README` 中 `--raw-text` / `BQUGE_RAW_TEXT`；E2E 见 `05` 与 `999.1-apibi-watermark-bom/E2E-2026-04-23.md`（apibi 仍有 `jqxs`/`gctxt` 等水印与每章 U+FEFF 待清）。  
+**原 Roadmap 中未在本文件关闭前编码:** Phase 6（MAIN）、Phase 7（CFG）与 E2E 回写项 — **已纳入 v1.2**。
+
+---
+
+## v1.2 — 源站正文洁净与工程收尾 (active)
+
+**开始:** 2026-04-23  
+**目标:** 在 v1.1 已交付的清洗/版式基线上，**消灭 apibi 抽测中记录的 BOM 与多类水印**（`999.1` 已 promote 为 Phase 8），并完成 **可维护性诊断**（MAIN）与 **可配置并发**（CFG）。可选：一次 HTML 回退路径的抽样 E2E 记录。  
 
 *关闭本里程碑时在此补充 shipped / metrics。*
 
