@@ -39,7 +39,7 @@
 
 ### Active (v1.2)
 
-- [ ] **CLEAN-01 / CLEAN-02:** 见 `REQUIREMENTS.md`（BOM/水印深化与单测）
+- [x] **CLEAN-01 / CLEAN-02:** 见 `REQUIREMENTS.md`（BOM/水印深化与单测）— Phase 8 已落地
 - [ ] **MAIN-01/02**、**CFG-01**（自 v1.1 平移）
 - [ ] **E2E-01**（可选）：HTML 回退路径抽样/全书记录
 
