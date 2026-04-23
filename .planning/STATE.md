@@ -24,10 +24,10 @@ See: .planning/PROJECT.md（**v1.3**）
 ## Current Position
 
 Milestone: **v1.3 类水印残留与清洗·二期**  
-Phase: **11** — **Context 已收集**（`.planning/phases/11-wm2-text-clean/11-CONTEXT.md`）  
-Plan: —  
-Status: **Ready for planning**  
-Last activity: 2026-04-24 — `/gsd-discuss-phase 11`（无交互收束，同 Phase 8 模式）  
+Phase: **11** — **PLAN 已落盘**（`11-01-PLAN.md`、`11-02-PLAN.md`）  
+Plan: `11-01` → `11-02`  
+Status: **Ready for execute**  
+Last activity: 2026-04-24 — `/gsd-plan-phase 11`（skip-research 等价：直接写 plan）  
 
 ## Performance Metrics
 
@@ -41,7 +41,7 @@ Last activity: 2026-04-24 — `/gsd-discuss-phase 11`（无交互收束，同 Ph
 
 ### Pending Todos
 
-- `/gsd-plan-phase 11` → `/gsd-execute-phase 11` — CLEAN-03（建议 11-01 固样 / 11-02 实现，见 CONTEXT）  
+- `/gsd-execute-phase 11`（或 `--auto`）— 先 `11-01` 生成 `11-INVENTORY.md`，再 `11-02` 实现/单测  
 - 其后 Phase 12：CFG-01；可选 Phase 13：E2E-01  
 
 ### Blockers/Concerns

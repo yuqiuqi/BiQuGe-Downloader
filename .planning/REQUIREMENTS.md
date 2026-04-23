@@ -44,7 +44,7 @@
 | CLEAN-01 | 8 | Complete |
 | CLEAN-02 | 8 | Complete |
 | MAIN-01, MAIN-02 | 9 | Complete |
-| CLEAN-03 | **11** 类水印二期 | Pending |
+| CLEAN-03 | 11（`11-01-PLAN` 盘点 / `11-02-PLAN` 实现） | Plans ready — pending execute |
 | CFG-01 | **12** 可配置并发 | Pending |
 | E2E-01 | **13** 可选，或合并验证任务 | Pending |
 
