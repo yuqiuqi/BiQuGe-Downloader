@@ -1,7 +1,7 @@
 # Phase 9: 可维护性与诊断 - Context
 
 **Gathered:** 2026-04-24  
-**Status:** Ready for planning  
+**Status:** Plans ready（`09-01-PLAN` / `09-02-PLAN`）  
 
 <domain>
 ## Phase Boundary

@@ -60,7 +60,8 @@
 | TXT-01, TXT-02 | v1.1（Phase 5 实现） | Complete（基线；残留见 CLEAN-02） |
 | CLEAN-01 | 8（`08-01-PLAN.md`） | Complete |
 | CLEAN-02 | 8（`08-02-PLAN.md`） | Complete |
-| MAIN-01, MAIN-02 | 9 可维护性与诊断 | Pending |
+| MAIN-01 | 9（`09-01-PLAN.md`） | Pending — execute |
+| MAIN-02 | 9（`09-02-PLAN.md`） | Pending — execute |
 | CFG-01 | 10 可配置并发 | Pending |
 | E2E-01 | 8 或独立验证任务；可选 | Pending |
 
@@ -68,4 +69,4 @@
 
 ---
 
-*Last updated: 2026-04-23 — milestone v1.2 / Phase 8 plans 08-01, 08-02*    
+*Last updated: 2026-04-24 — Phase 9 plans 09-01, 09-02*  

@@ -28,7 +28,7 @@
 3. `raw=True` 与 `README` 描述一致，单测或注释说明与默认路径差异  
 4. 根目录 `pytest` 通过，不破坏现有用例
 
-**Plans:** 待 `/gsd-plan-phase 8` 拆 8-01、8-02 等  
+**Plans:** 08-01 / 08-02（已完成）  
 **UI hint:** no  
 
 ### Phase 9: 可维护性与诊断
@@ -42,7 +42,7 @@
 2. `get_download_url` 无章节时，日志与退出信息给出可操作提示（如检查书号/站点变更）  
 3. 回归不破坏既有测试与 Phase 8 行为  
 
-**Plans:** 9-01, 9-02  
+**Plans:** `09-01-PLAN.md`（MAIN-01）、`09-02-PLAN.md`（MAIN-02）— 已落盘；待 `/gsd-execute-phase 9`  
 **UI hint:** no  
 
 ### Phase 10: 可配置并发
@@ -72,7 +72,7 @@
 | Phase | Theme | Status | Note |
 |-------|--------|--------|------|
 | 8 | 深度清洗与单测 | Complete | CLEAN-01/02 已落地 |
-| 9 | 可维护性与诊断 | **In progress** | `09-CONTEXT` 已写；待 9-01/9-02 计划与执行 |
+| 9 | 可维护性与诊断 | **Planned** | `09-01-PLAN` / `09-02-PLAN`；待 execute |
 | 10 | 可配置并发 | Not started | 原 v1.1 P7 |
 | 999.1 |（溯源） | Promoted → 8 | 见上 |
 

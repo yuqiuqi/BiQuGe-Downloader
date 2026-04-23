@@ -8,7 +8,7 @@ last_activity: 2026-04-24 — Phase 9 opened（09-CONTEXT）
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
+  total_plans: 4
   completed_plans: 2
   percent: 33
 ---
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (v1.2)
 ## Current Position
 
 Milestone: **v1.2 源站正文洁净与工程收尾**  
-Phase: **9** — 可维护性与诊断（**已开启**）  
-Plan: —（待 `/gsd-plan-phase 9`）  
-Status: **Context ready** — `.planning/phases/09-maintainability-diagnostics/09-CONTEXT.md`  
-Last activity: 2026-04-24 — 开启 Phase 9
+Phase: **9** — 可维护性与诊断  
+Plan: `09-01-PLAN.md` → `09-02-PLAN.md`（wave 1→2）  
+Status: **Planned** — 可 `/gsd-execute-phase 9`  
+Last activity: 2026-04-24 — `/gsd-plan-phase 9`
 
 ## Performance Metrics
 
@@ -45,7 +45,7 @@ Last activity: 2026-04-24 — 开启 Phase 9
 
 ### Pending Todos
 
-- `/gsd-plan-phase 9` → `/gsd-execute-phase 9`（MAIN-01/02）  
+- `/gsd-execute-phase 9`（或 `--wave 1` 后 `--wave 2`）  
 
 ### Blockers/Concerns
 
