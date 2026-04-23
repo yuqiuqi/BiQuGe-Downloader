@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-23T12:00:00.000Z"
-last_activity: 2026-04-23 — execute-phase 8 complete
+last_updated: "2026-04-24T12:00:00.000Z"
+last_activity: 2026-04-24 — Phase 9 opened（09-CONTEXT）
 progress:
   total_phases: 3
   completed_phases: 1
@@ -20,21 +20,21 @@ progress:
 See: .planning/PROJECT.md (v1.2)
 
 **Core value:** 稳定、可复现、可读的全书 TXT（本地或 CI）  
-**Current focus:** v1.2 — apibi/正文深度洁净（BOM+水印）、MAIN、CFG，可选 HTML E2E  
+**Current focus:** v1.2 — **Phase 9** 可维护性与诊断（MAIN-01/02），随后 Phase 10 CFG  
 
 ## Current Position
 
 Milestone: **v1.2 源站正文洁净与工程收尾**  
-Phase: **8** — **已完成**  
-Plan: `08-01` / `08-02` 已执行  
-Status: **Complete**（CLEAN-01/02）  
-Last activity: 2026-04-23 — `/gsd-execute-phase 8`
+Phase: **9** — 可维护性与诊断（**已开启**）  
+Plan: —（待 `/gsd-plan-phase 9`）  
+Status: **Context ready** — `.planning/phases/09-maintainability-diagnostics/09-CONTEXT.md`  
+Last activity: 2026-04-24 — 开启 Phase 9
 
 ## Performance Metrics
 
 **Velocity:** —  
 
-- Total plans completed: 0（本里程碑 v1.2）  
+- Total plans completed: 2（Phase 8：08-01/08-02）  
 - v1.0 累计: 6 plans（历史见 MILESTONES）  
 
 ## Accumulated Context
@@ -45,7 +45,7 @@ Last activity: 2026-04-23 — `/gsd-execute-phase 8`
 
 ### Pending Todos
 
-- Phase **9**（MAIN）或按 ROADMAP 顺序推进
+- `/gsd-plan-phase 9` → `/gsd-execute-phase 9`（MAIN-01/02）  
 
 ### Blockers/Concerns
 
@@ -53,5 +53,5 @@ Last activity: 2026-04-23 — `/gsd-execute-phase 8`
 
 ## Session Continuity
 
-Last session: 2026-04-23
-Resume: `.planning/phases/08-deep-clean-pytest-apibi/08-CONTEXT.md`  
+Last session: 2026-04-24
+Resume: `.planning/phases/09-maintainability-diagnostics/09-CONTEXT.md`  

@@ -14,10 +14,9 @@
 
 **Target features:**
 
-- 正文首/段 U+FEFF 剥离；扩展 `text_clean`（或等效后处理）覆盖 `jqxs ⊙cc`、`gctxt点cc` 等 apibi 常见模式 — 见 `.planning/phases/999.1-apibi-watermark-bom/E2E-2026-04-23.md`
-- 黄金字符串与 `pytest` 回归，raw 模式与「合法正文」不破坏
-- `save_to_file` / `run()` 路径与死代码；无章节时明确失败与建议（MAIN-01/02）
-- 并发度 CLI/环境变量可配与文档化（CFG-01）
+- ~~正文首/段 U+FEFF 与 apibi 水印~~ — **Phase 8 已完成**（CLEAN-01/02）  
+- **当前工作（Phase 9）：** 删除/统一与 `run()` 冲突的死代码（`save_to_file`），空目录时增强可诊断消息（MAIN-01/02）— 见 `09-CONTEXT`  
+- 并发度 CLI/环境变量可配与文档化（**Phase 10 / CFG-01**）
 - （可选）对仅 HTML 目录解析的一本书做抽样/全书 E2E，与 apibi 对照
 
 **上一里程碑 (v1.1) 摘要:** 已交付 `text_clean` 初版、落盘、无网单测、README 清洗说明；E2E 回写 999.1。详见 `MILESTONES.md` 与 v1.1 关闭注记。

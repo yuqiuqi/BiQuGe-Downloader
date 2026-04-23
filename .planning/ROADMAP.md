@@ -72,7 +72,7 @@
 | Phase | Theme | Status | Note |
 |-------|--------|--------|------|
 | 8 | 深度清洗与单测 | Complete | CLEAN-01/02 已落地 |
-| 9 | 可维护性与诊断 | Not started | 原 v1.1 P6 |
+| 9 | 可维护性与诊断 | **In progress** | `09-CONTEXT` 已写；待 9-01/9-02 计划与执行 |
 | 10 | 可配置并发 | Not started | 原 v1.1 P7 |
 | 999.1 |（溯源） | Promoted → 8 | 见上 |
 
@@ -82,4 +82,4 @@
 
 ---
 
-*Last updated: 2026-04-23 — 里程碑 v1.2*  
+*Last updated: 2026-04-24 — 里程碑 v1.2，Phase 9 已开启*  
