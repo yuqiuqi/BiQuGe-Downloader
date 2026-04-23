@@ -71,7 +71,7 @@
 
 | Phase | Theme | Status | Note |
 |-------|--------|--------|------|
-| 8 | 深度清洗与单测 | Not started | 承接 999.1 |
+| 8 | 深度清洗与单测 | Planned | `08-01-PLAN` / `08-02-PLAN` 已写 |
 | 9 | 可维护性与诊断 | Not started | 原 v1.1 P6 |
 | 10 | 可配置并发 | Not started | 原 v1.1 P7 |
 | 999.1 |（溯源） | Promoted → 8 | 见上 |

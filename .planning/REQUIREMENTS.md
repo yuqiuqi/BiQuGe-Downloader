@@ -58,7 +58,8 @@
 | PACK-01, PACK-02 | v1.0 P1 | Complete |
 | TEST-01, TEST-02 | v1.0 P2 | Complete |
 | TXT-01, TXT-02 | v1.1（Phase 5 实现） | Complete（基线；残留见 CLEAN-02） |
-| CLEAN-01, CLEAN-02 | 8 深度清洗与单测 | Pending |
+| CLEAN-01 | 8（`08-01-PLAN.md`） | Pending — execute |
+| CLEAN-02 | 8（`08-02-PLAN.md`） | Pending — execute |
 | MAIN-01, MAIN-02 | 9 可维护性与诊断 | Pending |
 | CFG-01 | 10 可配置并发 | Pending |
 | E2E-01 | 8 或独立验证任务；可选 | Pending |
@@ -67,4 +68,4 @@
 
 ---
 
-*Last updated: 2026-04-23 — milestone v1.2*  
+*Last updated: 2026-04-23 — milestone v1.2 / Phase 8 plans 08-01, 08-02*    
