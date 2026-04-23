@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 
 Phase: 1 of 4（依赖与 CI 对齐）  
 Plan: — of — in current phase  
-Status: Ready to plan  
-Last activity: 2026-04-23 — GSD new-project 初始化完成  
+Status: Context ready — 待 `/gsd-plan-phase 1`  
+Last activity: 2026-04-23 — Phase 1 discuss 完成，已写 `phases/01-ci/01-CONTEXT.md`  
 
 Progress: [░░░░░░░░░░] 0%  
 
@@ -47,5 +47,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-23  
-Stopped at: 新项目 ROADMAP 已写入，待 `/gsd-discuss-phase 1` 或 `/gsd-plan-phase 1`  
-Resume file: None  
+Stopped at: Phase 1 上下文已收敛，可开始规划与执行包  
+Resume file: `.planning/phases/01-ci/01-CONTEXT.md`  
