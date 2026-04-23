@@ -18,10 +18,10 @@
 - ✓ 随机 User-Agent、Referer 与短随机延时等基础防爬头（`NovelDownloader.__init__` / `get_chapter_content`）— 已存在
 - ✓ GitHub Actions 手动输入 ID/URL 并上传 `*.txt`（`.github/workflows/manual_download.yml`）— 已存在
 - ✓ 根目录 `requirements.txt` 与 `manual_download` workflow、`README` 推荐安装路径一致（Phase 1）— 已验证
+- ✓ 本地与 CI 可 `pytest`；`url_input.normalize_target_url` 有无网单测；workflow 中先 `test` 后 `download`（Phase 2）— 已验证
 
 ### Active
 
-- [ ] 引入可自动化运行的测试（如 pytest）并在 CI 中执行
 - [ ] 清理或接入未使用的 `save_to_file`、并在零章节时提供明确错误/诊断信息（见 `CONCERNS.md`）
 - [ ] 并发度等关键参数可配置（CLI 或环境变量），避免硬编码
 - [ ] 在不大改产品形态的前提下，为解析/HTML 选择器封装可测边界（便于应对站点小改版）
@@ -72,4 +72,4 @@
 
 ---
 
-*Last updated: 2026-04-23 after GSD new-project initialization*
+*Last updated: 2026-04-23 after Phase 2 execution (pytest + CI test job)*

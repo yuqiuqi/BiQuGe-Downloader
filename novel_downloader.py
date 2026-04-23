@@ -358,6 +358,8 @@ class NovelDownloader:
         print(f"耗时: {end_time - start_time:.2f} 秒")
 
 if __name__ == "__main__":
+    from url_input import normalize_target_url
+
     # 优先从命令行参数获取 URL (适配 GitHub Actions)
     if len(sys.argv) > 1:
         input_str = sys.argv[1]
@@ -368,14 +370,10 @@ if __name__ == "__main__":
         print("地址/ID不能为空")
     else:
         target_url = input_str.strip()
-        
-        # 如果是纯数字，补全为笔趣阁URL
-        if target_url.isdigit():
-             target_url = f"https://m.bqg92.com/book/{target_url}/"
-             print(f"检测到输入为ID，已自动补全为: {target_url}")
-        # 简单的补全 http
-        elif not target_url.startswith('http'):
-            target_url = 'https://' + target_url
-            
+        was_digit = target_url.isdigit()
+        target_url = normalize_target_url(target_url)
+        if was_digit:
+            print(f"检测到输入为ID，已自动补全为: {target_url}")
+
         dl = NovelDownloader(target_url)
         dl.run()

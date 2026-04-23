@@ -36,6 +36,19 @@ pip install -r requirements.txt
 
 **可选**：若不预先安装，脚本仍会尝试自动 `pip` 安装缺失依赖（见 `novel_downloader.py`）。
 
+## 🧪 开发（运行测试）
+
+在仓库根目录创建虚拟环境并同时安装运行依赖与开发依赖，然后执行 `pytest`：
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+# Windows（PowerShell）可使用: .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt -r requirements-dev.txt
+pytest
+# 安静模式：pytest -q
+```
+
 ## 🚀 使用方法
 
 ### 方式一：本地运行

@@ -1,0 +1,2 @@
+# 仅开发/CI 测试使用；运行 novel_downloader 仅需 requirements.txt
+pytest>=7.0.0

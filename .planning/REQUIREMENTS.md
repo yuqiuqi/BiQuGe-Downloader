@@ -12,8 +12,8 @@
 
 ### 质量与验证
 
-- [ ] **TEST-01**: 存在可本地与在 CI 中运行的一条命令执行自动化测试（如 `pytest`）
-- [ ] **TEST-02**: 对 URL/书号归一化或解析辅助逻辑，具备至少不依赖外网的单元测试样例
+- [x] **TEST-01**: 存在可本地与在 CI 中运行的一条命令执行自动化测试（如 `pytest`）
+- [x] **TEST-02**: 对 URL/书号归一化或解析辅助逻辑，具备至少不依赖外网的单元测试样例
 
 ### 可维护性与可观测
 
@@ -44,8 +44,8 @@
 |-------------|-------|--------|
 | PACK-01 | Phase 1 | Complete |
 | PACK-02 | Phase 1 | Complete |
-| TEST-01 | Phase 2 | Pending |
-| TEST-02 | Phase 2 | Pending |
+| TEST-01 | Phase 2 | Complete |
+| TEST-02 | Phase 2 | Complete |
 | MAIN-01 | Phase 3 | Pending |
 | MAIN-02 | Phase 3 | Pending |
 | CFG-01 | Phase 4 | Pending |
@@ -58,4 +58,4 @@
 ---
 
 *Requirements defined: 2026-04-23*  
-*Last updated: 2026-04-23 after Phase 1 execution (PACK-01/02 complete)*
+*Last updated: 2026-04-23 after Phase 2 execution (TEST-01/02 complete)*

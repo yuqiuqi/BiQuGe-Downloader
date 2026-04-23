@@ -7,7 +7,7 @@
 ## Phases
 
 - [x] **Phase 1: 依赖与 CI 对齐** — 声明式依赖与流水线安装一致   (completed 2026-04-23)
-- [ ] **Phase 2: 测试基线** — pytest 与 CI 跑通，关键纯逻辑有测  
+- [x] **Phase 2: 测试基线** — pytest 与 CI 跑通，关键纯逻辑有测   (completed 2026-04-23)
 - [ ] **Phase 3: 可维护性与错误信息** — 死代码与空目录体验  
 - [ ] **Phase 4: 可配置并发** — 线程数可配并文档化  
 
@@ -49,9 +49,9 @@ Plans:
 
 Plans:
 
-- [ ] 02-01: 引入 pytest 与目录结构（如 `tests/`）  
-- [ ] 02-02: 实现首批单元测试与可选样例 HTML fixture  
-- [ ] 02-03: CI 中接入测试步骤  
+- [x] 02-01: 引入 pytest 与目录结构（如 `tests/`）  
+- [x] 02-02: 实现首批单元测试与可选样例 HTML fixture  
+- [x] 02-03: CI 中接入测试步骤  
 
 ### Phase 3: 可维护性与错误信息
 
@@ -96,11 +96,12 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|------------|
 | 1. 依赖与 CI 对齐 | 3/3 | Complete    | 2026-04-23 |
-| 2. 测试基线 | 0/TBD | Not started | - |
+| 2. 测试基线 | 3/3 | Complete    | 2026-04-23 |
 | 3. 可维护性与错误信息 | 0/TBD | Not started | - |
 | 4. 可配置并发 | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-04-23*  
+*Last updated: 2026-04-23 — Phase 2 complete*  
 *Granularity: coarse (4 phases)*
