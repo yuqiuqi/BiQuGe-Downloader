@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 
 Phase: 2 of 4 (测试基线)
 Plan: Not started
-Status: Ready to execute
+Status: Context ready — 待 `/gsd-plan-phase 2`
 Last activity: 2026-04-23
 
 Progress: [███░░░░░░░] 25%（Phase 1 已完成）  
@@ -63,5 +63,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-23  
-Stopped at: Phase 1 上下文已收敛，可开始规划与执行包  
-Resume file: `.planning/phases/01-ci/01-CONTEXT.md`  
+Stopped at: Phase 2 discuss 完成，已写 `phases/02-testing/02-CONTEXT.md`  
+Resume file: `.planning/phases/02-testing/02-CONTEXT.md`  
