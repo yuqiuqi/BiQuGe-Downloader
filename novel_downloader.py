@@ -41,6 +41,7 @@ from bqg_api import (
     parse_book_id_from_url,
     try_fetch_book_api,
 )
+from text_clean import clean_chapter_text
 
 """
 类说明: 下载《笔趣看》网小说
@@ -52,14 +53,23 @@ from bqg_api import (
 4. 优化 HTML 解析逻辑
 """
 
+def _env_raw_text() -> bool:
+    v = (os.environ.get("BQUGE_RAW_TEXT") or "").strip().lower()
+    return v in ("1", "true", "yes", "on")
+
+
 class NovelDownloader:
-    def __init__(self, target_url: str):
+    def __init__(self, target_url: str, raw_text: object = None):
         self.target_url = target_url
         # 使用 Session 保持连接，提高性能
         self.session = requests.Session()
         # 新站：apibi.cc API（与 m.bqg92.com / *bqg655.cc 书号一致时可走此路径）
         self._use_api = False
         self._api_book_id = None
+        if raw_text is None:
+            self._raw_text = _env_raw_text()
+        else:
+            self._raw_text = bool(raw_text)
         
         # 随机 User-Agent 列表
         user_agents = [
@@ -198,6 +208,9 @@ class NovelDownloader:
             print(f"获取目录失败: {e}")
             return []
 
+    def _finalize_chapter_text(self, text: str) -> str:
+        return clean_chapter_text(text, self._raw_text)
+
     def get_chapter_content(self, url: str, retries=3):
         """
         下载单个章节内容 (支持分页)
@@ -211,7 +224,7 @@ class NovelDownloader:
             for attempt in range(retries):
                 text = fetch_chapter_text_api(self.session, bid, ch_idx)
                 if text is not None:
-                    return text
+                    return self._finalize_chapter_text(text)
                 time.sleep(0.5 * (attempt + 1))
             return "无法解析此章节内容"
 
@@ -301,7 +314,9 @@ class NovelDownloader:
             else:
                 current_url = None
 
-        return full_content if full_content else "下载失败"
+        if not full_content:
+            return "下载失败"
+        return self._finalize_chapter_text(full_content)
 
     def save_to_file(self, file_path: str, chapter_title: str, content: str):
         """
@@ -375,15 +390,24 @@ class NovelDownloader:
 
         print("\n正在将内容按顺序写入文件...")
         
-        # 按顺序写入
-        with open(file_path, 'a', encoding='utf-8') as f:
+        # 按顺序写入（首章前不输出多余空行，见 Phase 5 / UAT P2）
+        with open(file_path, "a", encoding="utf-8") as f:
             for i in range(total_chapters):
                 title = chapters[i][0]
                 content = results.get(i, "下载失败")
-                f.write(f"\n\n{title}\n")
+                if not isinstance(content, str):
+                    content = str(content)
+                content = content.rstrip() + "\n" if content.strip() else content
+                if i == 0:
+                    f.write(f"{title}\n")
+                else:
+                    f.write(f"\n\n{title}\n")
                 f.write("-" * 20 + "\n")
                 f.write(content)
-                f.write("\n\n")
+                if not content.endswith("\n"):
+                    f.write("\n")
+                if i < total_chapters - 1:
+                    f.write("\n")
 
         end_time = time.time()
         print(f"\n《{self.novel_name}》下载完成！")
@@ -393,9 +417,14 @@ class NovelDownloader:
 if __name__ == "__main__":
     from url_input import normalize_target_url
 
-    # 优先从命令行参数获取 URL (适配 GitHub Actions)
-    if len(sys.argv) > 1:
-        input_str = sys.argv[1]
+    argv = list(sys.argv[1:])
+    raw_flag = False
+    if "--raw-text" in argv:
+        raw_flag = True
+        argv = [a for a in argv if a != "--raw-text"]
+
+    if argv:
+        input_str = argv[0]
     else:
         input_str = input("请输入小说目录下载地址或ID (例如: https://m.bqg92.com/book/3953/ 或 3953):\n")
 
@@ -408,5 +437,5 @@ if __name__ == "__main__":
         if was_digit:
             print(f"检测到输入为ID，已自动补全为: {target_url}")
 
-        dl = NovelDownloader(target_url)
+        dl = NovelDownloader(target_url, raw_text=raw_flag)
         dl.run()
