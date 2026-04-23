@@ -4,7 +4,7 @@ milestone: v1.3
 milestone_name: 类水印残留与清洗·二期
 status: planning
 last_updated: "2026-04-24T12:00:00.000Z"
-last_activity: 2026-04-24 — new-milestone v1.3 started
+last_activity: 2026-04-24 — discuss-phase 11 context captured
 progress:
   total_phases: 3
   completed_phases: 0
@@ -20,15 +20,15 @@ progress:
 See: .planning/PROJECT.md（**v1.3**）
 
 **Core value:** 稳定、可复现、可读的全书 TXT（本地或 CI）  
-**Current focus:** v1.3 — **Phase 11** 起：类水印二期清洗，其后 **Phase 12**（CFG-01）  
+**Current focus:** v1.3 — **Phase 11** `11-CONTEXT.md` 已就绪 → **plan-phase 11**  
 
 ## Current Position
 
 Milestone: **v1.3 类水印残留与清洗·二期**  
-Phase: **未开始**（定义完成：见 `ROADMAP` Phase 11 / 12 / 可选 13）  
+Phase: **11** — **Context 已收集**（`.planning/phases/11-wm2-text-clean/11-CONTEXT.md`）  
 Plan: —  
-Status: **Defining / ready for discuss-plan**  
-Last activity: 2026-04-24 — `/gsd-new-milestone`（目标：成书仍见类水印行 + 收尾 CFG）  
+Status: **Ready for planning**  
+Last activity: 2026-04-24 — `/gsd-discuss-phase 11`（无交互收束，同 Phase 8 模式）  
 
 ## Performance Metrics
 
@@ -42,9 +42,8 @@ Last activity: 2026-04-24 — `/gsd-new-milestone`（目标：成书仍见类水
 
 ### Pending Todos
 
-- `/gsd-discuss-phase 11` 或 `/gsd-plan-phase 11` — CLEAN-03（`text_clean` 二期 + 单测）  
-- 然后 Phase 12：`/gsd-execute-phase` 对应 CFG-01（可与文档拆成 12-01 / 12-02）  
-- 可选：Phase 13 E2E-01  
+- `/gsd-plan-phase 11` → `/gsd-execute-phase 11` — CLEAN-03（建议 11-01 固样 / 11-02 实现，见 CONTEXT）  
+- 其后 Phase 12：CFG-01；可选 Phase 13：E2E-01  
 
 ### Blockers/Concerns
 
