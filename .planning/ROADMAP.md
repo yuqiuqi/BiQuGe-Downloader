@@ -6,7 +6,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: 依赖与 CI 对齐** — 声明式依赖与流水线安装一致  
+- [x] **Phase 1: 依赖与 CI 对齐** — 声明式依赖与流水线安装一致   (completed 2026-04-23)
 - [ ] **Phase 2: 测试基线** — pytest 与 CI 跑通，关键纯逻辑有测  
 - [ ] **Phase 3: 可维护性与错误信息** — 死代码与空目录体验  
 - [ ] **Phase 4: 可配置并发** — 线程数可配并文档化  
@@ -29,9 +29,9 @@
 
 Plans:
 
-- [ ] 01-01: 添加/校验 `requirements.txt` 与 Python 版本说明  
-- [ ] 01-02: 调整 `.github/workflows/manual_download.yml` 使用同一依赖源  
-- [ ] 01-03: 更新 `README.md` 安装与运行段落（如需要）  
+- [x] 01-01: 添加/校验 `requirements.txt` 与 Python 版本说明  
+- [x] 01-02: 调整 `.github/workflows/manual_download.yml` 使用同一依赖源  
+- [x] 01-03: 更新 `README.md` 安装与运行段落（如需要）  
 
 ### Phase 2: 测试基线
 
@@ -95,7 +95,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|------------|
-| 1. 依赖与 CI 对齐 | 0/TBD | Not started | - |
+| 1. 依赖与 CI 对齐 | 3/3 | Complete    | 2026-04-23 |
 | 2. 测试基线 | 0/TBD | Not started | - |
 | 3. 可维护性与错误信息 | 0/TBD | Not started | - |
 | 4. 可配置并发 | 0/TBD | Not started | - |
