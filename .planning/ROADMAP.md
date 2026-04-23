@@ -9,7 +9,7 @@
 
 ## Phases (v1.3)
 
-- [ ] **Phase 11: 类水印/噪音二期（text_clean）** — CLEAN-03  
+- [x] **Phase 11: 类水印/噪音二期（text_clean）** — CLEAN-03（`11-SUMMARY.md`）  
 - [ ] **Phase 12: 可配置并发** — CFG-01（自 v1.2 Phase 10 平移）  
 - [ ] **Phase 13:（可选）HTML 回退 E2E 记录** — E2E-01  
 
@@ -26,7 +26,7 @@
 2. 回归：`pytest` 全绿；既有黄金用例/Phase 8 相关断言**不降级**（除非经文档说明的刻意变更）  
 3. `raw=True` 行为与 `README` 一致或已同步更新说明  
 
-**Plans:** 待 `/gsd-plan-phase 11`（建议 `11-01` 盘点与用例固化为先，`11-02` 实现与单测）  
+**Plans:** `11-01` + `11-02` 已执行（`11-INVENTORY.md` / 单测变体 + `text_clean` / `README` 注记）  
 **UI hint:** no  
 
 ### Phase 12: 可配置并发
@@ -62,7 +62,7 @@
 
 | Phase | Theme | Status | Note |
 |-------|--------|--------|------|
-| 11 | 类水印/噪音二期 | Not started | CLEAN-03 |
+| 11 | 类水印/噪音二期 | Complete | 见 `11-SUMMARY.md` |
 | 12 | 可配置并发 | Not started | 自 v1.2 CFG-01 平移 |
 | 13 |（可选）E2E HTML | Not started | E2E-01 |
 
@@ -72,4 +72,4 @@
 
 ---
 
-*Last updated: 2026-04-24 — 里程碑 v1.3 路线图*  
+*Last updated: 2026-04-24 — Phase 11 已 Complete*  

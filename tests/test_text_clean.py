@@ -85,3 +85,37 @@ def test_gctxt_dot_ascii_variant():
     out = clean_chapter_text(s, raw=False)
     assert "gctxt" not in out
     assert "尾部" in out
+
+
+# --- Phase 11 / CLEAN-03: 合成变体加固（见 11-INVENTORY.md）---
+
+
+@pytest.mark.parametrize(
+    "chunk",
+    [
+        "情节  jqxs  ⊙  cc  继续",  # 多空格
+        "情节jqxs⊙cc继续",  # 无空格紧贴
+        "文\njqxs\n⊙\ncc\n尾",  # 换行拆开（仍应删各段水印残片）
+    ],
+)
+def test_jqxs_circle_cc_variants_removed(chunk):
+    out = clean_chapter_text(chunk, raw=False)
+    assert "jqxs" not in out
+    assert "⊙" not in out
+
+
+def test_gctxt_with_ideographic_spaces():
+    """全角空白 U+3000 仍应被 \\s* 匹配（Unicode 模式）。"""
+    s = "前段 gctxt　点　cc 后段"  # \u3000 around 点
+    out = clean_chapter_text(s, raw=False)
+    assert "gctxt" not in out
+    assert "前段" in out
+    assert "后段" in out
+
+
+def test_narrative_jqxs_token_in_dialogue_not_a_typical_watermark():
+    """合法叙事里单独出现 jqxs 字母（非 jqxs⊙cc 族）不强制删除。"""
+    s = "他吐槽这站 jqxs 缩写谁看得懂。"
+    out = clean_chapter_text(s, raw=False)
+    assert "jqxs" in out
+    assert "缩写" in out

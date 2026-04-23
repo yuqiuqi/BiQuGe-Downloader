@@ -3,6 +3,9 @@
 章节正文清洗：去源站常见水印/行内噪音（apibi/HTML 拉取后统一使用）。
 
 仅标准库；可测、无网络。规则见 UAT 与 Phase 5 CONTEXT。
+
+Phase 11 / CLEAN-03：在 Phase 8 已覆盖 E2E 主要族的前提下做回归与文档锚点，详见
+`.planning/phases/11-wm2-text-clean/11-INVENTORY.md`（2026-04-24）。
 """
 from __future__ import annotations
 
@@ -91,6 +94,9 @@ def clean_chapter_text(text: str, raw: bool = False) -> str:
     """
     对单章正文做清洗。raw=True 时不移除行内/行级营销规则，但会做换行统一并去掉 U+FEFF（BOM 类
     噪声字节，见 Phase 8）；默认路径另应用 _INLINE / 行滤等规则。
+
+    CLEAN-03 / Phase 11：默认路径规则集与 E2E 对照表见
+    ``.planning/phases/11-wm2-text-clean/11-INVENTORY.md``；无新子串时以单测加固为主。
 
     失败提示类短句应由调用方避免传入；如传入，仍做换行统一，不做行删以免误伤。
     """
