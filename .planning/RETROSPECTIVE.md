@@ -27,10 +27,31 @@
 
 ---
 
+## Milestone: v1.4 — HTML 回退路径 E2E
+
+**Shipped:** 2026-04-24  
+**Phases:** 13 | **Plans:** 13-01, 13-02  
+
+### What was built
+
+- 一书双路径（`BQUGE_API_BASE` 与默认 apibi）**可复现**对照与结论文档；README 一句入口。  
+
+### What worked
+
+- 不改编码即可用环境变量**切换**可观测路径，适合写进 E2E。  
+- 采数与定稿**分两 plan**，减轻单次上下文。  
+
+### Gaps
+
+- 章数/标题在双路径上**可不一致**，需在文档中写清，避免被误报为单一路径 bug。  
+
+---
+
 ## Cross-Milestone Trends
 
 | Milestone | Focus | Phases in scope (high level) |
 |-----------|--------|------------------------------|
 | v1.3 | 清洗二期 + 并发可配 | 11, 12 |
+| v1.4 | HTML 回退 E2E 记录 | 13 |
 
 *Append new rows when additional milestones close.*  

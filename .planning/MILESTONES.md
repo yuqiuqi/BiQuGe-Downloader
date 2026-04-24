@@ -35,17 +35,18 @@
 - **CLEAN-03 / Phase 11** — `11-INVENTORY.md`、变体单测与 `text_clean`/`README` 锚点；不扩大无据正则，以可回归单测收束。  
 - **CFG-01 / Phase 12** — `novel_downloader` 中 `resolve_max_workers`；CLI `-j`/`--workers`；`BQUGE_MAX_WORKERS`；默认 10 线程、上限 64；`tests/test_novel_workers.py`；README「并发」与 `pytest` 全绿。  
 **归档:** `.planning/milestones/v1.3-ROADMAP.md`、`.planning/milestones/v1.3-REQUIREMENTS.md`  
-**本版未做（留待后续）:** **E2E-01 / Phase 13**（HTML 回退一书对照）— 仍为**可选**；已写入新 `REQUIREMENTS.md` 候选项。  
+**本版未做（留待后续）:** —（原 v1.3 时推迟的 E2E-01 已由 **v1.4** 收束。）  
 **Known 流程注记 at close:** `11-UAT.md` 未完整对话式验收闭环；以各 `*-SUMMARY.md` 与 `pytest` 为交付主证据。  
-**Known deferred items at close: 1**（可选 E2E-01）— 见 `STATE.md` 与新版 `REQUIREMENTS.md`  
+**Known deferred items at v1.3 close（历史）:** 原「可选 E2E-01」— 后由 v1.4 关闭。  
 
 ---
 
-## v1.4 — HTML 回退路径 E2E 与可复现记录 (shippable)
+## v1.4 — HTML 回退路径 E2E 与可复现记录 (closed)
 
 **开始:** 2026-04-24  
-**已交付 (Phase 13):** **E2E-01 / E2E-02** — `13-RUN-RECORD.md`、`E2E-2026-04-24.md`（书号 **3953**：apibi **113** 章 vs HTML 目录 **13** 章及元数据差异）、`README`「路径对照」一句；`13-SUMMARY.md`。不强制联网 CI。  
-**可选后续:** 运行 **`/gsd-complete-milestone`** 与 v1.3 同型归档。  
+**关闭:** 2026-04-24  
+**已交付 (SHIPPED `v1.4`):** **E2E-01 / E2E-02 / Phase 13** — `13-RUN-RECORD.md`、`E2E-2026-04-24.md`（书号 **3953**：apibi **113** 章 vs HTML 目录 **13** 章及元数据差异）、`README`「路径对照（E2E，v1.4）」；`13-SUMMARY.md`。不强制联网 CI。  
+**归档:** `.planning/milestones/v1.4-ROADMAP.md`、`.planning/milestones/v1.4-REQUIREMENTS.md`  
 
 ---
 
