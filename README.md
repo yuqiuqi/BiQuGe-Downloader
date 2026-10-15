@@ -1,117 +1,134 @@
-# Novel Downloader (小说下载器)
+# BiQuGe Downloader · 小说下载器
 
-## 新站使用（迁移中）
+基于 Python 的小说搜索与多线程下载工具，支持在本地运行，也支持通过 GitHub Actions 搜索、选择并下载小说。
 
-运行 `python novel_downloader.py --search '书名或作者或拼音'` 查看候选书籍，选择目录 URL 后运行 `python novel_downloader.py 'https://www.xbiquge.info/12/345/' --workers 5`。原有 `Novel Downloader` Actions 工作流现支持 search / download 两阶段，生成 TXT 的 ZIP 文件。新站端到端下载尚未验证，以下旧站说明待清理。
+> **当前主要适配站点：** https://www.xbiquge.info/  
+> **使用前请注意：** 新站搜索、目录及章节解析尚未完成真实网站的端到端验证。网站页面结构变化、访问限制或网络问题都可能导致失败。本项目仅供合法、授权的个人使用，请尊重作品版权。
 
+## 功能
 
-这是一个基于 Python 的多线程小说下载工具，专为下载笔趣阁（及同类结构站点）小说而设计。支持 GitHub Actions 自动化运行。
+- **关键词搜索**：通过书名、作者或拼音作为关键词查询候选书籍，结果包含可供选择的目录链接；具体匹配效果取决于目标站点的搜索能力。
+- **先选书，再下载**：避免同名作品直接下载错误版本。
+- **多线程下载**：默认 5 个线程，可通过命令行或 Actions 参数调整。
+- **TXT 与 ZIP**：本地保存小说 TXT，同时生成包含 TXT 的 ZIP 压缩包。
+- **GitHub Actions**：无需在电脑上配置 Python 环境，手动运行工作流并下载结果。
 
-## ✨ 功能特点
+## GitHub Actions 使用教程（推荐）
 
-- **🚀 多线程并发**：使用线程池实现高速下载；v1.3 起**并发线程数**可通过命令行或环境变量配置（与历史**默认 10 线程**兼容，见下文「并发」）。
-- **🆔 智能 ID 识别**：直接输入小说 ID（如 `3953`）或完整 URL 即可下载。
-- **📡 新站兼容**：站点跳转到 `*.bqg655.cc` 的 hash 地址时，**无需**在浏览器里复制最终链接；书号在路径、hash、`?id=`、`?book_id=` 或纯数字中均可识别，程序会**自动**走 `apibi` 书库；目录接口失败时会**回退**到传统 HTML 解析。若需指向镜像 API，可设置环境变量 `BQUGE_API_BASE`（完整根路径，如 `https://apibi.cc/api`）。
-- **🛠 环境配置**：推荐用虚拟环境 + `requirements.txt` 预装依赖；**可选**地，直接运行脚本时仍会尝试自动 `pip` 安装缺失包（见 `novel_downloader.py`）。
-- **🛡 智能防爬虫**：
-  - 随机 User-Agent 伪装。
-  - 请求头模拟（Referer, Accept 等）。
-  - 随机延时机制，模拟真实用户行为。
-- **📖 智能解析**：
-  - 自动处理章节内分页（检测“下一页”并合并内容）。
-  - 自动识别网页编码，防止乱码。
-  - 自动去除广告内容。
-- **📂 便捷保存**：自动在脚本同级目录下生成小说 TXT 文件。
-- **🤖 GitHub Actions**：支持在云端自动运行并下载文件。
+进入 [仓库 Actions 页面](https://github.com/yuqiuqi/BiQuGe-Downloader/actions)，在左侧选择 **Novel Downloader**，点击 **Run workflow**，分支选择 **main**。
 
-## 📦 依赖要求
+当前工作流需要运行 **两次**：第一次搜索，第二次下载。搜索结果不会自动变成下拉菜单，需要手动复制目标小说的目录 URL。
 
-- Python 3.6+（与 GitHub Actions 一致时**建议**使用 Python 3.10）
-- 运行时需要 **requests**、**beautifulsoup4**、**lxml**（在 `requirements.txt` 中声明）
+### 第一步：搜索小说
 
-### 推荐安装（与 CI 一致）
+| 参数 | 填写内容 |
+| --- | --- |
+| `mode` | `search` |
+| `keyword` | 小说名称、作者或拼音，例如 `三体` |
+| `novel_id` | 留空 |
+| `workers` | `5`（搜索时不使用） |
 
-在仓库根目录使用虚拟环境安装，与 **GitHub Actions** 使用同一份 `requirements.txt`：
+点击 **Run workflow**。任务结束后：
+
+1. 打开该次运行记录，在 **Search or download** 步骤日志中查看候选列表。
+2. 或在页面底部 **Artifacts** 中下载 **novel-results**，解压后查看 `candidates.json`。
+3. 从候选列表中确认书名、作者，复制所选作品的完整 `url`。
+
+### 第二步：下载所选小说
+
+再次点击 **Run workflow**：
+
+| 参数 | 填写内容 |
+| --- | --- |
+| `mode` | `download` |
+| `keyword` | 留空 |
+| `novel_id` | 第一步复制的**完整小说目录 URL** |
+| `workers` | `5`（默认，可修改） |
+
+**URL 格式示例**：`https://www.xbiquge.info/12/345/`（仅演示格式，不代表真实书籍）。
+
+运行成功后，在 **Artifacts → novel-results** 下载 GitHub 打包的工作流附件。附件内部会包含程序生成的 `小说名.zip`；再解压一次即可获取小说 TXT。
+
+**注意：** 参数名 `novel_id` 是原工作流沿用的名称，**目前应填写完整目录 URL，而不是纯数字 ID**。旧站书号与新站目录路径不一定对应。
+
+### 为什么没有开始下载？
+
+当前工作流包含两个任务：
+
+1. `test`：安装依赖并运行 `pytest -q`。
+2. `download`：只有 `test` 通过后才执行搜索或下载，并上传产物。
+
+如果任务停在 `test`，请先打开失败步骤查看测试日志；如果 `Search or download` 失败，检查关键词、目录 URL、网站是否可访问及页面结构。工作流会在搜索/下载任务结束后尝试上传已经生成的文件，但失败时不保证有完整 ZIP。
+
+## 本地运行
+
+### 环境准备
+
+建议使用 **Python 3.11**（与 GitHub Actions 一致）。
 
 ```bash
-python3 -m venv .venv
+git clone https://github.com/yuqiuqi/BiQuGe-Downloader.git
+cd BiQuGe-Downloader
+
+python -m venv .venv
+# macOS / Linux
 source .venv/bin/activate
-# Windows（PowerShell）可使用: .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+# Windows PowerShell
+# .venv\Scripts\Activate.ps1
+
+python -m pip install -r requirements.txt
 ```
 
-**可选**：若不预先安装，脚本仍会尝试自动 `pip` 安装缺失依赖（见 `novel_downloader.py`）。
-
-## 🧪 开发（运行测试）
-
-在仓库根目录创建虚拟环境并同时安装运行依赖与开发依赖，然后执行 `pytest`：
+### 搜索
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-# Windows（PowerShell）可使用: .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt -r requirements-dev.txt
-pytest
-# 安静模式：pytest -q
+python novel_downloader.py --search "三体"
 ```
 
-## 🚀 使用方法
+程序会打印候选书籍 JSON，并在当前目录保存 `candidates.json`。从中选择对应的 `url`。
 
-### 方式一：本地运行
-
-1. 克隆仓库或下载 `novel_downloader.py` 文件（完整克隆时推荐先按上文「推荐安装」创建 venv 并执行 `pip install -r requirements.txt`）。
-2. 若已安装依赖，运行脚本：
-   ```bash
-   python novel_downloader.py
-   ```
-3. 根据提示输入 **小说 ID**（例如 `3953`）或 **完整目录地址**。
-   - 示例输入 1：`3953`
-   - 示例输入 2：`https://xxxxxxxxx/book/3953/`
-4. 等待下载完成，文件将保存在当前目录下。
-
-### 方式二：命令行传参
-
-直接在命令中附带 ID 或 URL：
+### 下载
 
 ```bash
-# 使用 ID 下载
-python novel_downloader.py 3953
-
-# 使用 URL 下载
-python novel_downloader.py https://xxxxxxx.com/book/3953/
+python novel_downloader.py "https://www.xbiquge.info/12/345/" --workers 5
 ```
 
-**并发（v1.3 / CFG-01）**：下载阶段使用**线程池**；默认与此前版本相同为 **10** 个线程。可用下面任一方式调整：
+示例 URL 仅表示目录路径格式，使用时请替换成搜索结果中的真实 URL。
 
-- 命令行：`-j N` 或 `--workers N`（`N` 为 1~64 的整数，超过上限会自动限制并提示）。示例：`python novel_downloader.py -j 4 3953`
-- 环境变量：`export BQUGE_MAX_WORKERS=4`（仅当**未**在命令行指定 `--workers` / `-j` 时生效）
-- 说明：不设上述选项时，行为与旧版**固定 10 线程**一致，便于与既有脚本/CI 对照。
+并发数可以用 `-j 5`、`--workers 5` 或环境变量 `BQUGE_MAX_WORKERS=5` 配置。命令行参数优先，代码限制并发数最多为 64；为减少站点压力，建议使用默认值 5 或更低。
 
-查看全部选项：`python novel_downloader.py --help`
+可选参数：
 
-**路径对照（E2E，v1.4）：** 同一书号在 **apibi 成功** 与 **仅 HTML 目录** 下的可复现命令、日志判据与目录差异见 `.planning/phases/13-e2e-html/E2E-2026-04-24.md`（与上「新站兼容 / `BQUGE_API_BASE`」互补）。  
+- `--raw-text`：跳过营销水印等文本清洗规则（仍会进行基础换行处理）。
+- `--help`：查看完整命令行选项。
 
-**正文清洗（默认开启）**：从 apibi 或 HTML 拉取的章节正文会经 `text_clean` 做常见推广水印/噪音行处理（如行内 `bqfun ⊕cc` 类、独立营销短行、仅含 `/read/<数字>/` 的行等）。v1.3 **CLEAN-03** 在既有规则上通过盘点与单测加固（见 `.planning/phases/11-wm2-text-clean/11-INVENTORY.md`）。**不需要清洗**时二选一：命令行加 `--raw-text`，或设置环境变量 `export BQUGE_RAW_TEXT=1`（`true` / `on` 等同理）。**raw 模式仍会**统一换行并去除 UTF-8 BOM 类字符（U+FEFF），但**不**应用行内/行级营销清洗。多章写入 TXT 时，首章前不额外空行、章与章之间以少量空行分隔。
+下载完成后，项目目录中会生成 `小说名.txt` 和 `小说名.zip`。
 
-### 方式三：GitHub Actions (云端运行)
+## 开发与测试
 
-工作流在运行前会从仓库根目录的 `requirements.txt` 安装依赖，与本地推荐方式一致。
+```bash
+python -m pip install -r requirements.txt -r requirements-dev.txt
+pytest -q
+```
 
-1. Fork 本仓库到你的 GitHub。
-2. 点击仓库上方的 **Actions** 标签。
-3. 选择左侧的 **Novel Downloader**。
-4. 点击右侧的 **Run workflow**。
-5. 在输入框中输入 **小说 ID** (如 `3953`) 或完整链接。
-6. 等待任务运行显示 ✅ 成功。
-7. 点击该次运行记录，滑动到底部找到 **Artifacts** 区域。
-8. 点击 **novel-text-file**，浏览器会自动下载一个 ZIP 压缩包。
-9. 解压该 ZIP 文件，即可获得小说的 TXT 文本文件。
+主要文件：
 
-## 未找到章节目录时
+| 文件 | 作用 |
+| --- | --- |
+| `novel_downloader.py` | 命令行入口、下载调度、正文清洗与 ZIP 输出 |
+| `bqg_api.py` | 站点搜索、目录和章节获取，以及保留的历史 API 兼容逻辑 |
+| `url_input.py` | 输入 URL 归一化 |
+| `text_clean.py` | 章节文本清理 |
+| `.github/workflows/manual_download.yml` | GitHub Actions 工作流 |
 
-若程序打印 **未找到可下载的章节目录** 并以**退出码 1** 结束（本地与 GitHub Actions 均如此），请阅读终端中给出的**目标地址、书号、apibi/HTML 路径说明**与（若设置）**BQUGE_API_BASE**，核对书号/URL、在浏览器中打开 `https://m.bqg92.com/book/<书号>/` 是否可见章节、网络/代理后重试。
+## 已知限制
 
-## ⚠️ 免责声明
+- **新站尚未完成线上端到端验证**，搜索结果结构、章节内容选择器或站点限制可能变化。
+- 目前使用的是**两次手动触发**的搜索与下载流程，并非网页内实时选择候选书籍。
+- 下载线程执行失败、正文解析失败等异常的处理仍有改进空间；不要把生成 ZIP 直接视为所有章节均完整下载的证明。
+- 旧站相关兼容代码可能仍保留在项目中，但不代表旧站仍然可用。
+- 网站内容和访问规则可能发生变化，遇到问题请附上 Actions 日志反馈。
 
-本项目仅供学习和技术交流使用。请勿用于商业用途，请尊重版权，支持正版小说。
+## 免责声明
 
+本项目仅用于学习和技术交流，以及对有权访问和保存的内容进行处理。请遵守适用法律、网站条款并尊重著作权。
