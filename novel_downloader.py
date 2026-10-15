@@ -42,9 +42,10 @@ from bqg_api import (
     try_fetch_book_api,
 )
 from text_clean import clean_chapter_text
+from bqg_api import search as search_books, catalog as site_catalog, chapter as site_chapter
 
 # v1.3 Phase 12 / CFG-01：并发可配置；CLI 与 BQUGE_MAX_WORKERS 见 README「并发」
-DEFAULT_MAX_WORKERS = 10
+DEFAULT_MAX_WORKERS = 5
 MAX_WORKERS_CAP = 64
 MAX_WORKERS_ENV = "BQUGE_MAX_WORKERS"
 
@@ -155,7 +156,7 @@ class NovelDownloader:
         })
         self.novel_name = "下载的小说"
 
-        book_id = parse_book_id_from_url(target_url)
+        book_id = None if 'xbiquge.info' in target_url else parse_book_id_from_url(target_url)
         if book_id:
             meta = try_fetch_book_api(self.session, book_id)
             if meta and meta.get("title"):
@@ -182,6 +183,9 @@ class NovelDownloader:
         return self._get_chapters_from_page()
 
     def _get_chapters_from_page(self):
+        if 'xbiquge.info' in self.target_url:
+            self.novel_name, chapters = site_catalog(self.session, self.target_url)
+            return chapters
         """从目录页 HTML 解析章节链接（传统笔趣阁结构及 /kan/ 等）。"""
         try:
             response = self.session.get(self.target_url, timeout=15)
@@ -287,6 +291,8 @@ class NovelDownloader:
                 time.sleep(0.5 * (attempt + 1))
             return "无法解析此章节内容"
 
+        if 'xbiquge.info' in url:
+            return self._finalize_chapter_text(site_chapter(requests.Session(), url))
         # 模拟真实用户行为：随机等待一小段时间，避免请求过于密集
         time.sleep(random.uniform(0.1, 0.3))
 
@@ -486,6 +492,9 @@ class NovelDownloader:
         print(f"\n《{self.novel_name}》下载完成！")
         print(f"保存路径: {os.path.abspath(file_path)}")
         print(f"耗时: {end_time - start_time:.2f} 秒")
+        import zipfile
+        with zipfile.ZipFile(os.path.join(script_dir, safe_novel_name + ".zip"), "w", zipfile.ZIP_DEFLATED) as archive:
+            archive.write(file_path, os.path.basename(file_path))
 
 if __name__ == "__main__":
     import argparse
@@ -512,6 +521,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="笔趣阁类站点小说多线程下载；并发默认与历史行为一致为 10 线程。",
     )
+    parser.add_argument("--search", metavar="KEYWORD", help="按书名、作者或拼音搜索")
     parser.add_argument(
         "url",
         nargs="?",
@@ -533,6 +543,13 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    if args.search:
+        import json
+        books = search_books(requests.Session(), args.search)
+        with open("candidates.json", "w", encoding="utf-8") as f:
+            json.dump(books, f, ensure_ascii=False, indent=2)
+        print(json.dumps(books, ensure_ascii=False, indent=2))
+        sys.exit(0 if books else 1)
     input_str = args.url
     if not input_str:
         input_str = input(
