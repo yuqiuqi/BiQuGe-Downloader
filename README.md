@@ -19,6 +19,33 @@
 
 整个过程是 **搜索 → 从候选列表选书 → 下载 ZIP**。目前 GitHub Actions 无法在同一次手动运行中动态弹出搜索候选，因此需要**分别点击两次 Run workflow**。
 
+### GitHub Actions 到底支持哪些输入？
+
+**工作流有两种操作模式**：`search` 通过关键词查找候选；`download` 根据完整目录 URL 下载。不能直接把书名放进 `novel_id` 启动下载。
+
+| 想做什么 | `mode` | 填写字段 | 输入示例 | 当前兼容性 |
+| --- | --- | --- | --- | --- |
+| 按书名查找 | `search` | `keyword` | `三体` | 支持将关键词提交站内搜索；命中效果取决于网站 |
+| 按作者查找 | `search` | `keyword` | `刘慈欣` | 支持作为搜索关键词；作者匹配取决于网站 |
+| 按拼音查找 | `search` | `keyword` | `santi` | 支持提交拼音字符串；**不保证站点提供拼音检索** |
+| 按目录首页下载 | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/` | **目录格式受支持** |
+| 按分页目录下载 | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/index_1.html` | **目录格式受支持**（本次修复） |
+| 按 `index.html` 下载 | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/index.html` | **目录格式受支持** |
+| 仅提供数字书号 | `download` | `novel_id` | `11549` | **不支持**，无法可靠推断两级目录 |
+| 直接输入章节 URL | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/301.html` | **不支持**，请填目录地址 |
+| 直接输入书名下载 | `download` | `novel_id` | `三体` | **不支持**，请先搜索 |
+
+**以上 URL 只是格式示例。** “支持”表示已经过代码规则和模拟页面测试；不表示该 URL 一定真实存在，或站点实时访问、全书下载已通过验证。网站的真实搜索接口、访问限制及页面结构仍需实测。可用域名为 `www.xbiquge.info` / `xbiquge.info`；本项目不保证其他镜像域名兼容。
+
+**操作小抄：**
+
+1. [打开工作流](https://github.com/yuqiuqi/BiQuGe-Downloader/actions/workflows/manual_download.yml)，点击 **Run workflow** → `main` → `mode: search`，在 `keyword` 填书名/作者/拼音，运行。
+2. 下载 `novel-results` 附件，打开 `candidates.json`，核对书名、作者，复制候选的完整目录 URL。
+3. 再运行一次，选 `mode: download`，把上述 URL 粘贴进 `novel_id`，`workers` 使用默认 `5`。
+4. 打开新运行记录 → **Artifacts → novel-results** → 解压外层附件 → 解压小说 ZIP → 获取 TXT 和报告 JSON。报告中 `failed` 非空代表部分章节失败，需重新核对。
+
+如果手里已有可信的完整目录 URL，可**跳过搜索**，直接选择 `download` 模式。目录可以是首页或 `index_1.html` 等分页地址。
+
 ### 0. 打开运行界面
 
 1. 登录 GitHub，进入本仓库顶部的 **Actions** 标签。
@@ -73,9 +100,9 @@
 | **novel_id** | `https://www.xbiquge.info/12/345/` | 粘贴第一步选中的**完整目录 URL** |
 | **workers** | `5` | 下载并发线程数，建议先用默认值 |
 
-> **重点：`novel_id` 虽然叫“ID”，但现在必须填完整的小说目录 URL，不能只填数字书号。** 表格中的 URL 仅演示格式，请换成实际搜索结果里的 URL。
+> **重点：`novel_id` 虽然叫“ID”，但现在必须填完整的小说目录 URL（也支持 `index_1.html` 等目录分页地址），不能只填数字书号。** 表格中的 URL 仅演示格式，请换成实际搜索结果里的 URL。
 
-提交后打开新的运行记录，等待 `test` 和 `download` 两个任务执行完毕。
+提交后打开新的运行记录，等待 `download` 任务完成。`test` 会独立并行执行，不再阻止手动搜索或下载。
 
 ### 3. 下载 TXT / ZIP 文件
 
@@ -91,15 +118,15 @@
 | 现象 | 检查位置 | 可能原因或处理方法 |
 | --- | --- | --- |
 | 点击 Run workflow 后一直等待 | Actions 运行记录 | 等待 GitHub 分配 runner；检查 Actions 是否启用 |
-| `test` 任务显示红叉 | `test` → `pytest -q` | 自动测试未通过，`download` 会被跳过；需先修复测试 |
+| `test` 任务显示红叉 | `test` → `pytest -q` | 自动测试未通过，但不影响独立运行的下载任务；仍应修复测试 |
 | 搜索没有候选结果 | `download` → `Search or download` | 关键词无结果、网站无法访问或搜索页面结构变化；尝试完整书名或作者 |
 | 下载任务失败 | `download` → `Search or download` | 目录 URL 不正确、网站限流、章节页面结构变化或网络错误 |
 | 没有 Artifacts | 运行记录底部 | `download` 未执行或没有生成符合上传规则的文件 |
-| ZIP 缺少章节 | 任务日志及 TXT 内容 | 当前失败章节处理尚不完善，需核对完整性 |
+| ZIP 缺少章节 | 任务日志及 TXT 内容 | 失败章节将记录在报告中，并使下载任务返回失败；请检查 ZIP 内的 report.json |
 
-**工作流执行顺序：** 每次运行都会先执行 `test`（安装依赖、运行 `pytest -q`），测试通过后才执行名为 `download` 的任务。**即使 `mode=search`，执行搜索的任务也叫 `download`，这是工作流的内部任务名，不表示正在下载小说。**
+**工作流执行顺序：** 每次运行都会独立执行 `test`（安装依赖、运行 `pytest -q`）和 `download`；测试失败不再阻止搜索或下载。**即使 `mode=search`，执行搜索的任务也叫 `download`，这是工作流的内部任务名，不表示正在下载小说。**
 
-搜索/下载任务中，`upload-artifact` 步骤设置为 `if: always()`，因此即使该任务中的命令失败，也会尝试上传已经生成的 `*.zip` 或 `candidates.json`；但如果前置测试失败，下载任务根本不会启动，也不会生成这些文件。
+搜索/下载任务中，`upload-artifact` 步骤设置为 `if: always()`，因此即使该任务中的命令失败，也会尝试上传已经生成的 `*.zip` 或 `candidates.json`；失败报告 `*.report.json` 也会单独上传（若已生成）。
 
 > **当前版本说明：** 新站在线搜索和下载尚未完成端到端验证。如果首次运行失败，请在对应运行记录里展开红色步骤，复制错误日志用于排查。不要仅凭任务产生了 ZIP 就认定所有章节都完整。
 

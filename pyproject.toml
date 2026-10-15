@@ -3,7 +3,7 @@ name = "novel-downloader"
 version = "0.0.0"
 description = "笔趣阁小说下载器"
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.10"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

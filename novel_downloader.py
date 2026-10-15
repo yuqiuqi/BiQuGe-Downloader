@@ -292,7 +292,19 @@ class NovelDownloader:
             return "无法解析此章节内容"
 
         if 'xbiquge.info' in url:
-            return self._finalize_chapter_text(site_chapter(requests.Session(), url))
+            last_error = None
+            for attempt in range(retries):
+                try:
+                    # A separate session per request avoids sharing mutable Session state.
+                    with requests.Session() as chapter_session:
+                        chapter_session.headers.update(self.session.headers)
+                        text = site_chapter(chapter_session, url)
+                    return self._finalize_chapter_text(text)
+                except (requests.RequestException, ValueError) as exc:
+                    last_error = exc
+                    if attempt < retries - 1:
+                        time.sleep(0.5 * (attempt + 1))
+            raise RuntimeError(f"章节请求失败（重试 {retries} 次）：{last_error}")
         # 模拟真实用户行为：随机等待一小段时间，避免请求过于密集
         time.sleep(random.uniform(0.1, 0.3))
 
@@ -412,89 +424,57 @@ class NovelDownloader:
         return "\n".join(lines)
 
     def run(self):
-        print("\n\t\t欢迎使用小说下载小工具 (优化版)\n")
-        print("*************************************************************************")
-        
+        """Download in bounded batches, preserve order and report failed chapters."""
+        import json
+        import zipfile
+
         chapters = self.get_download_url()
         if not chapters:
-            print(self._empty_catalog_diagnostics())
-            # 退出代码 1，通知 GitHub Actions 任务失败
-            sys.exit(1)
+            raise ValueError(self._empty_catalog_diagnostics())
 
-        total_chapters = len(chapters)
-        print(f"共发现 {total_chapters} 章，准备开始下载...")
-        
-        # 获取脚本所在目录，确保文件保存在脚本同级目录下
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # 清洗文件名，去除非法字符 (如 /, \, :, *, ?, ", <, >, |) 以避免文件路径错误
-        safe_novel_name = re.sub(r'[\\/*?:"<>|]', '_', self.novel_name)
-        file_path = os.path.join(script_dir, f"{safe_novel_name}.txt")
-        
-        if os.path.exists(file_path):
-            os.remove(file_path)
-            print(f"已删除旧文件: {file_path}")
+        safe_name = re.sub(r'[\\/*?:"<>|\r\n]', "_", self.novel_name).strip(" .")
+        safe_name = safe_name[:120] or "下载的小说"
+        output_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(output_dir, safe_name + ".txt")
+        report_path = os.path.join(output_dir, safe_name + ".report.json")
+        zip_path = os.path.join(output_dir, safe_name + ".zip")
+        failed = []
+        workers = resolve_max_workers(self._opt_max_workers)
+        print(f"发现 {len(chapters)} 章；使用 {workers} 个线程。", flush=True)
+        started = time.monotonic()
 
-        # 准备用于保存结果的列表，因为多线程是乱序的，我们需要按顺序写入
-        # 这里为了简单，我们可以先下载所有内容存入内存（如果小说非常大，建议分批写入）
-        # 或者更稳妥的方式：单线程写入，多线程下载。
-        
-        # 使用字典存储下载结果 index -> content
-        results = {}
-        
-        start_time = time.time()
-        
-        # 建议线程数不要过高，以免被网站封 IP
-        max_workers = resolve_max_workers(self._opt_max_workers)
-        print(f"正在使用 {max_workers} 个线程并发下载，请稍候...")
+        # Keep only one batch in memory; do not buffer a large novel at once.
+        with open(file_path, "w", encoding="utf-8") as out, ThreadPoolExecutor(max_workers=workers) as executor:
+            for offset in range(0, len(chapters), 40):
+                batch = chapters[offset:offset + 40]
+                futures = [executor.submit(self.get_chapter_content, url) for _, url in batch]
+                for index, ((title, url), future) in enumerate(zip(batch, futures), start=offset + 1):
+                    try:
+                        content = future.result()
+                        if not isinstance(content, str) or not content.strip() or content.strip() in (
+                            "无法解析此章节内容", "无法解析此章节地址", "下载失败"
+                        ):
+                            raise ValueError("章节正文为空或返回了失败标记")
+                    except Exception as exc:
+                        failed.append({"index": index, "title": title, "url": url, "error": str(exc)})
+                        content = "[本章下载失败；请查看报告]\n"
+                        print(f"章节失败 [{index}/{len(chapters)}] {title}: {exc}", file=sys.stderr, flush=True)
+                    out.write(("" if index == 1 else "\n\n") + title + "\n" + "-" * 20 + "\n")
+                    out.write(content.rstrip() + "\n")
+                print(f"已处理 {min(offset + 40, len(chapters))}/{len(chapters)} 章", flush=True)
 
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # 提交所有任务
-            future_to_index = {
-                executor.submit(self.get_chapter_content, url): index 
-                for index, (title, url) in enumerate(chapters)
-            }
-            
-            finished_count = 0
-            for future in as_completed(future_to_index):
-                index = future_to_index[future]
-                content = future.result()
-                results[index] = content
-                
-                finished_count += 1
-                # 简易进度条
-                percent = (finished_count / total_chapters) * 100
-                sys.stdout.write(f"\r已下载: {percent:.2f}% ({finished_count}/{total_chapters})")
-                sys.stdout.flush()
-
-        print("\n正在将内容按顺序写入文件...")
-        
-        # 按顺序写入（首章前不输出多余空行，见 Phase 5 / UAT P2）
-        with open(file_path, "a", encoding="utf-8") as f:
-            for i in range(total_chapters):
-                title = chapters[i][0]
-                content = results.get(i, "下载失败")
-                if not isinstance(content, str):
-                    content = str(content)
-                content = content.rstrip() + "\n" if content.strip() else content
-                if i == 0:
-                    f.write(f"{title}\n")
-                else:
-                    f.write(f"\n\n{title}\n")
-                f.write("-" * 20 + "\n")
-                f.write(content)
-                if not content.endswith("\n"):
-                    f.write("\n")
-                if i < total_chapters - 1:
-                    f.write("\n")
-
-        end_time = time.time()
-        print(f"\n《{self.novel_name}》下载完成！")
-        print(f"保存路径: {os.path.abspath(file_path)}")
-        print(f"耗时: {end_time - start_time:.2f} 秒")
-        import zipfile
-        with zipfile.ZipFile(os.path.join(script_dir, safe_novel_name + ".zip"), "w", zipfile.ZIP_DEFLATED) as archive:
+        report = {"title": self.novel_name, "total": len(chapters),
+                  "succeeded": len(chapters) - len(failed), "failed": failed,
+                  "elapsed_seconds": round(time.monotonic() - started, 2)}
+        with open(report_path, "w", encoding="utf-8") as handle:
+            json.dump(report, handle, ensure_ascii=False, indent=2)
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
             archive.write(file_path, os.path.basename(file_path))
+            archive.write(report_path, os.path.basename(report_path))
+        print(f"完成：成功 {report['succeeded']}/{len(chapters)}；ZIP: {zip_path}")
+        if failed:
+            raise RuntimeError(f"{len(failed)} 章下载失败。请查看 ZIP 内的失败报告。")
+        return zip_path
 
 if __name__ == "__main__":
     import argparse
@@ -519,13 +499,13 @@ if __name__ == "__main__":
         return n
 
     parser = argparse.ArgumentParser(
-        description="笔趣阁类站点小说多线程下载；并发默认与历史行为一致为 10 线程。",
+        description="新笔趣阁小说搜索与多线程下载，默认并发 5 线程。",
     )
     parser.add_argument("--search", metavar="KEYWORD", help="按书名、作者或拼音搜索")
     parser.add_argument(
         "url",
         nargs="?",
-        help="书号或目录页 URL（可省略，改为交互输入）",
+        help="小说目录 URL（支持 index_N.html 分页目录）",
     )
     parser.add_argument(
         "--raw-text",
@@ -553,7 +533,7 @@ if __name__ == "__main__":
     input_str = args.url
     if not input_str:
         input_str = input(
-            "请输入小说目录下载地址或ID (例如: https://m.bqg92.com/book/3953/ 或 3953):\n"
+            "请输入完整小说目录 URL (例如 https://www.xbiquge.info/11/11549/index_1.html):\n"
         )
 
     if not input_str or not str(input_str).strip():
@@ -571,6 +551,6 @@ if __name__ == "__main__":
             target_url, raw_text=args.raw_text, max_workers=args.max_workers
         )
         dl.run()
-    except ValueError as e:
+    except (ValueError, RuntimeError, requests.RequestException) as e:
         print(e, file=sys.stderr)
         sys.exit(1)

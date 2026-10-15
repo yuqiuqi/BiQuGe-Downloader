@@ -32,3 +32,101 @@ def test_chapter():
 def test_external_url_rejected():
     with pytest.raises(ValueError):
         _safe_url("https://example.org/12/345/")
+
+
+def test_paginated_catalog_collects_all_chapters_and_ignores_external_links():
+    root = "https://www.xbiquge.info/11/11549/"
+    pages = {
+        root: '<h1>测试长篇</h1><a href="/11/11549/302.html">第二章</a>'
+              '<a href="/11/11549/index_1.html">1</a>'
+              '<a href="https://external.example/11/11549/404.html">外部广告</a>',
+        root + "index_1.html": '<a href="/11/11549/301.html">第一章</a>'
+                                '<a href="/11/11549/index_2.html">2</a>',
+        root + "index_2.html": '<a href="/11/11549/303.html">第三章</a>',
+    }
+
+    class PageSession:
+        def get(self, url, **kwargs):
+            assert url in pages, url
+            return Response(pages[url])
+
+    title, chapters = catalog(PageSession(), root + "index_1.html")
+    assert title == "测试长篇"
+    assert [chapter_title for chapter_title, _ in chapters] == [
+        "第一章", "第二章", "第三章"
+    ]
+
+
+def test_paginated_catalog_fails_on_missing_pages():
+    root = "https://www.xbiquge.info/11/11549/"
+
+    class BrokenSession:
+        def get(self, url, **kwargs):
+            if url.endswith("index_2.html"):
+                raise ConnectionError("simulated missing page")
+            return Response('<h1>书名</h1><a href="/11/11549/301.html">第一章</a>'
+                            '<a href="/11/11549/index_2.html">2</a>')
+
+    with pytest.raises(ValueError, match="部分目录页读取失败"):
+        catalog(BrokenSession(), root)
+
+
+def test_catalog_rejects_non_catalog_chapter_url():
+    with pytest.raises(ValueError, match="目录地址格式"):
+        catalog(Session(""), "https://www.xbiquge.info/11/11549/301.html")
+
+
+def test_search_skips_external_book_link():
+    html = ('<li><a href="https://external.example/12/345/">欺骗链接</a></li>'
+            '<li><a href="/12/345/">正确小说</a> 作者：作者A</li>')
+    found = search(Session(html), "正确")
+    assert len(found) == 1
+    assert found[0]["title"] == "正确小说"
+
+
+def test_multi_page_chapter_includes_all_pages():
+    base = "https://www.xbiquge.info/11/11549/"
+    pages = {
+        base + "301.html": (
+            '<div id="content">第一页的小说正文，包含一些用于验证分页处理的文字。</div>'
+            '<a href="301_2.html">下一页</a>'
+        ),
+        base + "301_2.html": (
+            '<div id="content">第二页的小说正文，包含另一段用于验证分页处理的文字。</div>'
+            '<a href="302.html">下一章</a>'
+        ),
+    }
+
+    class PageSession:
+        def get(self, url, **kwargs):
+            assert url in pages, url
+            return Response(pages[url])
+
+    text = chapter(PageSession(), base + "301.html")
+    assert "第一页" in text and "第二页" in text
+    assert text.index("第一页") < text.index("第二页")
+
+
+@pytest.mark.parametrize("path", [
+    "/11/11549/",
+    "/11/11549/index.html",
+    "/11/11549/index_1.html",
+    "/11/11549/index_25.html",
+])
+def test_supported_download_entry_urls(path):
+    from bqg_api import _catalog_root
+    assert _catalog_root("https://www.xbiquge.info" + path) == (
+        "https://www.xbiquge.info/11/11549/"
+    )
+
+
+@pytest.mark.parametrize("url", [
+    "https://www.xbiquge.info/11/11549/301.html",
+    "https://www.xbiquge.info/book/11549/",
+    "https://www.xbiquge.info/",
+    "https://evil.example/11/11549/",
+])
+def test_unsupported_download_entry_urls(url):
+    from bqg_api import _catalog_root
+    with pytest.raises(ValueError):
+        _catalog_root(url)

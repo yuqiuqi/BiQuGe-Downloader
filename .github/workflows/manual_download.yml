@@ -1,20 +1,25 @@
 name: Novel Downloader
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('{0} | {1}', inputs.mode, inputs.mode == 'search' && inputs.keyword || inputs.novel_id) || 'Unit tests' }}
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       mode:
+        description: '第1次选 search 搜索候选；第2次选 download 下载选中目录。详见 README'
         type: choice
         options: [search, download]
+        default: search
         required: true
       keyword:
-        description: '书名、作者或拼音'
+        description: '仅 search 填：书名/作者/拼音（如 三体）；结果在日志及 candidates.json'
         type: string
         required: false
       novel_id:
-        description: '选中的新站目录 URL'
+        description: '仅 download 填完整目录URL：/11/11549/ 或 /11/11549/index_1.html；不可填纯数字或章节URL'
         type: string
         required: false
       workers:
+        description: '仅 download 生效；并发下载线程数，建议 5（范围 1～64）'
         type: string
         default: '5'
         required: true
@@ -31,7 +36,7 @@ jobs:
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: pytest -q
   download:
-    needs: test
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +44,14 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
+      - name: Validate input
+        env:
+          MODE: ${{ inputs.mode }}
+          KEYWORD: ${{ inputs.keyword }}
+          BOOK_URL: ${{ inputs.novel_id }}
+        run: |
+          if [ "$MODE" = search ] && [ -z "$KEYWORD" ]; then echo '搜索模式需要 keyword'; exit 1; fi
+          if [ "$MODE" = download ] && [ -z "$BOOK_URL" ]; then echo '下载模式需要完整目录 URL'; exit 1; fi
       - name: Search or download
         env:
           MODE: ${{ inputs.mode }}
@@ -57,5 +70,6 @@ jobs:
           name: novel-results
           path: |
             *.zip
+            *.report.json
             candidates.json
           if-no-files-found: warn
