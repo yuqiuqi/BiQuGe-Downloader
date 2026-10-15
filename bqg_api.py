@@ -175,7 +175,7 @@ def _soup(session, url, **kwargs):
         try:
             response = session.get(candidate, timeout=(8, 18), **kwargs)
             # Only transient failures warrant a second host attempt.
-            if response.status_code in (429, 500, 502, 503, 504, 520, 521, 522, 523, 524):
+            if getattr(response, 'status_code', 200) in (429, 500, 502, 503, 504, 520, 521, 522, 523, 524):
                 last_error = requests.HTTPError(
                     f"HTTP {response.status_code} at {candidate}", response=response
                 )
