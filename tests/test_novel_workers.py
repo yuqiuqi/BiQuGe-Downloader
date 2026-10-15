@@ -42,6 +42,7 @@ def test_cli_rejects_zero() -> None:
 
 
 def test_partial_failure_produces_report_and_nonzero(tmp_path, monkeypatch):
+    monkeypatch.setattr(nd.time, 'sleep', lambda _: None)
     import json
     import zipfile
     from types import SimpleNamespace
@@ -89,3 +90,33 @@ def test_successful_download_writes_ordered_zip(tmp_path, monkeypatch):
     assert text.index("第一章") < text.index("第二章")
     assert report["succeeded"] == 2
     assert report["failed"] == []
+
+
+def test_transient_chapter_failure_recovers_on_second_pass(tmp_path, monkeypatch):
+    import json
+    import zipfile
+    from types import SimpleNamespace
+    monkeypatch.setattr(nd, "__file__", str(tmp_path / "novel_downloader.py"))
+    monkeypatch.setattr(nd.time, "sleep", lambda _: None)
+    calls = {}
+
+    def fetch(url):
+        calls[url] = calls.get(url, 0) + 1
+        if url == "flaky" and calls[url] == 1:
+            raise RuntimeError("502 Bad Gateway")
+        return "恢复后获取到的真实章节内容。"
+
+    downloader = SimpleNamespace(
+        novel_name="补抓测试", _opt_max_workers=2,
+        get_download_url=lambda: [("第一章", "good"), ("第二章", "flaky")],
+        get_chapter_content=fetch,
+    )
+    archive_path = nd.NovelDownloader.run(downloader)
+    with zipfile.ZipFile(archive_path) as archive:
+        report = json.loads(archive.read("补抓测试.report.json"))
+        text = archive.read("补抓测试.txt").decode("utf-8")
+    assert report["succeeded"] == 2
+    assert not report["failed"]
+    assert "恢复后获取到的真实章节内容" in text
+    assert "[本章下载失败" not in text
+    assert calls["flaky"] == 2

@@ -448,17 +448,48 @@ class NovelDownloader:
             for offset in range(0, len(chapters), 40):
                 batch = chapters[offset:offset + 40]
                 futures = [executor.submit(self.get_chapter_content, url) for _, url in batch]
-                for index, ((title, url), future) in enumerate(zip(batch, futures), start=offset + 1):
+                contents = {}
+                batch_failed = []
+                for local_index, ((title, url), future) in enumerate(zip(batch, futures)):
                     try:
                         content = future.result()
                         if not isinstance(content, str) or not content.strip() or content.strip() in (
                             "无法解析此章节内容", "无法解析此章节地址", "下载失败"
                         ):
                             raise ValueError("章节正文为空或返回了失败标记")
+                        contents[local_index] = content
                     except Exception as exc:
-                        failed.append({"index": index, "title": title, "url": url, "error": str(exc)})
-                        content = "[本章下载失败；请查看报告]\n"
-                        print(f"章节失败 [{index}/{len(chapters)}] {title}: {exc}", file=sys.stderr, flush=True)
+                        batch_failed.append((local_index, title, url, str(exc)))
+
+                # After concurrent requests finish, retry transient failures serially.
+                # A pause avoids immediately hammering a degraded origin.
+                for local_index, title, url, original_error in batch_failed:
+                    final_error = original_error
+                    for retry_round in range(2):
+                        time.sleep(2 + 3 * retry_round)
+                        try:
+                            recovered = self.get_chapter_content(url)
+                            if (not isinstance(recovered, str) or not recovered.strip()
+                                    or recovered.strip() in (
+                                        "无法解析此章节内容", "无法解析此章节地址", "下载失败"
+                                    )):
+                                raise ValueError("补抓返回空正文或失败标记")
+                            contents[local_index] = recovered
+                            print(f"补抓成功 [{offset + local_index + 1}/{len(chapters)}] {title}", flush=True)
+                            break
+                        except Exception as exc:
+                            final_error = str(exc)
+                    if local_index not in contents:
+                        failed.append({"index": offset + local_index + 1,
+                                       "title": title, "url": url,
+                                       "error": final_error,
+                                       "initial_error": original_error})
+                        print(f"最终失败 [{offset + local_index + 1}/{len(chapters)}] {title}: {final_error}",
+                              file=sys.stderr, flush=True)
+
+                for local_index, (title, url) in enumerate(batch):
+                    index = offset + local_index + 1
+                    content = contents.get(local_index, "[本章下载失败；请查看报告]\n")
                     out.write(("" if index == 1 else "\n\n") + title + "\n" + "-" * 20 + "\n")
                     out.write(content.rstrip() + "\n")
                 print(f"已处理 {min(offset + 40, len(chapters))}/{len(chapters)} 章", flush=True)
