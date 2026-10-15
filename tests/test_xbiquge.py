@@ -167,3 +167,48 @@ def test_gateway_error_fails_over_to_official_alternate_host():
     text = chapter(session, url)
     assert "备用域名" in text
     assert session.urls == [url, backup]
+
+
+def test_522_gateway_falls_back_to_alternate_host():
+    from bqg_api import _soup
+    import requests
+    class Resp:
+        encoding = "utf-8"
+        apparent_encoding = "utf-8"
+        url = None
+        def __init__(self, code, html=""):
+            self.status_code = code
+            self.text = html
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise requests.HTTPError(f"HTTP {self.status_code}")
+    class Fake:
+        calls = []
+        def get(self, url, **kwargs):
+            self.calls.append(url)
+            if "www.xbiquge.info" in url:
+                return Resp(522)
+            return Resp(200, "<article class='font_max'>有效正文所在的章节标签</article>")
+    sess = Fake()
+    soup = _soup(sess, "http://www.xbiquge.info/11/11549/1163959.html")
+    assert soup.select_one("article.font_max")
+    assert sess.calls == [
+        "https://www.xbiquge.info/11/11549/1163959.html",
+        "https://xbiquge.info/11/11549/1163959.html"
+    ]
+
+
+def test_read_timeout_falls_back_to_alternate_host():
+    from bqg_api import _soup
+    import requests
+    class Fake:
+        calls = []
+        def get(self, url, **kwargs):
+            self.calls.append(url)
+            if "www.xbiquge.info" in url:
+                raise requests.ReadTimeout("simulated")
+            return Response("<article class='font_max'>正文</article>")
+    sess = Fake()
+    soup = _soup(sess, "https://www.xbiquge.info/11/11549/1163959.html")
+    assert soup.select_one("article.font_max")
+    assert len(sess.calls) == 2
