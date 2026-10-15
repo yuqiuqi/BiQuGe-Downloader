@@ -1,5 +1,6 @@
 name: Novel Downloader
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       mode:
@@ -31,6 +32,7 @@ jobs:
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: pytest -q
   download:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
