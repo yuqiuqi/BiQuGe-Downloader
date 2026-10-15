@@ -19,6 +19,33 @@
 
 整个过程是 **搜索 → 从候选列表选书 → 下载 ZIP**。目前 GitHub Actions 无法在同一次手动运行中动态弹出搜索候选，因此需要**分别点击两次 Run workflow**。
 
+### GitHub Actions 到底支持哪些输入？
+
+**工作流有两种操作模式**：`search` 通过关键词查找候选；`download` 根据完整目录 URL 下载。不能直接把书名放进 `novel_id` 启动下载。
+
+| 想做什么 | `mode` | 填写字段 | 输入示例 | 当前兼容性 |
+| --- | --- | --- | --- | --- |
+| 按书名查找 | `search` | `keyword` | `三体` | 支持将关键词提交站内搜索；命中效果取决于网站 |
+| 按作者查找 | `search` | `keyword` | `刘慈欣` | 支持作为搜索关键词；作者匹配取决于网站 |
+| 按拼音查找 | `search` | `keyword` | `santi` | 支持提交拼音字符串；**不保证站点提供拼音检索** |
+| 按目录首页下载 | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/` | **目录格式受支持** |
+| 按分页目录下载 | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/index_1.html` | **目录格式受支持**（本次修复） |
+| 按 `index.html` 下载 | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/index.html` | **目录格式受支持** |
+| 仅提供数字书号 | `download` | `novel_id` | `11549` | **不支持**，无法可靠推断两级目录 |
+| 直接输入章节 URL | `download` | `novel_id` | `https://www.xbiquge.info/11/11549/301.html` | **不支持**，请填目录地址 |
+| 直接输入书名下载 | `download` | `novel_id` | `三体` | **不支持**，请先搜索 |
+
+**以上 URL 只是格式示例。** “支持”表示已经过代码规则和模拟页面测试；不表示该 URL 一定真实存在，或站点实时访问、全书下载已通过验证。网站的真实搜索接口、访问限制及页面结构仍需实测。可用域名为 `www.xbiquge.info` / `xbiquge.info`；本项目不保证其他镜像域名兼容。
+
+**操作小抄：**
+
+1. [打开工作流](https://github.com/yuqiuqi/BiQuGe-Downloader/actions/workflows/manual_download.yml)，点击 **Run workflow** → `main` → `mode: search`，在 `keyword` 填书名/作者/拼音，运行。
+2. 下载 `novel-results` 附件，打开 `candidates.json`，核对书名、作者，复制候选的完整目录 URL。
+3. 再运行一次，选 `mode: download`，把上述 URL 粘贴进 `novel_id`，`workers` 使用默认 `5`。
+4. 打开新运行记录 → **Artifacts → novel-results** → 解压外层附件 → 解压小说 ZIP → 获取 TXT 和报告 JSON。报告中 `failed` 非空代表部分章节失败，需重新核对。
+
+如果手里已有可信的完整目录 URL，可**跳过搜索**，直接选择 `download` 模式。目录可以是首页或 `index_1.html` 等分页地址。
+
 ### 0. 打开运行界面
 
 1. 登录 GitHub，进入本仓库顶部的 **Actions** 标签。
