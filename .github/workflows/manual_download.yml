@@ -31,7 +31,6 @@ jobs:
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: pytest -q
   download:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +38,14 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
+      - name: Validate input
+        env:
+          MODE: ${{ inputs.mode }}
+          KEYWORD: ${{ inputs.keyword }}
+          BOOK_URL: ${{ inputs.novel_id }}
+        run: |
+          if [ "$MODE" = search ] && [ -z "$KEYWORD" ]; then echo '搜索模式需要 keyword'; exit 1; fi
+          if [ "$MODE" = download ] && [ -z "$BOOK_URL" ]; then echo '下载模式需要完整目录 URL'; exit 1; fi
       - name: Search or download
         env:
           MODE: ${{ inputs.mode }}
@@ -57,5 +64,6 @@ jobs:
           name: novel-results
           path: |
             *.zip
+            *.report.json
             candidates.json
           if-no-files-found: warn
