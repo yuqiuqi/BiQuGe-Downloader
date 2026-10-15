@@ -82,3 +82,26 @@ def test_search_skips_external_book_link():
     found = search(Session(html), "正确")
     assert len(found) == 1
     assert found[0]["title"] == "正确小说"
+
+
+def test_multi_page_chapter_includes_all_pages():
+    base = "https://www.xbiquge.info/11/11549/"
+    pages = {
+        base + "301.html": (
+            '<div id="content">第一页的小说正文，包含一些用于验证分页处理的文字。</div>'
+            '<a href="301_2.html">下一页</a>'
+        ),
+        base + "301_2.html": (
+            '<div id="content">第二页的小说正文，包含另一段用于验证分页处理的文字。</div>'
+            '<a href="302.html">下一章</a>'
+        ),
+    }
+
+    class PageSession:
+        def get(self, url, **kwargs):
+            assert url in pages, url
+            return Response(pages[url])
+
+    text = chapter(PageSession(), base + "301.html")
+    assert "第一页" in text and "第二页" in text
+    assert text.index("第一页") < text.index("第二页")
