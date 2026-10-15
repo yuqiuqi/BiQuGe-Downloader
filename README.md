@@ -1,5 +1,10 @@
 # Novel Downloader (小说下载器)
 
+## 新站使用（迁移中）
+
+运行 `python novel_downloader.py --search '书名或作者或拼音'` 查看候选书籍，选择目录 URL 后运行 `python novel_downloader.py 'https://www.xbiquge.info/12/345/' --workers 5`。原有 `Novel Downloader` Actions 工作流现支持 search / download 两阶段，生成 TXT 的 ZIP 文件。新站端到端下载尚未验证，以下旧站说明待清理。
+
+
 这是一个基于 Python 的多线程小说下载工具，专为下载笔趣阁（及同类结构站点）小说而设计。支持 GitHub Actions 自动化运行。
 
 ## ✨ 功能特点
