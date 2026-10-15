@@ -160,7 +160,15 @@ def _safe_url(href, base=BASE):
 
 
 def _soup(session, url, **kwargs):
+    """Fetch HTML, retrying a transient 502/503/504 via the site's other official host."""
     response = session.get(url, timeout=(10, 25), **kwargs)
+    if getattr(response, "status_code", 200) in (502, 503, 504):
+        parsed = urlparse(url)
+        if parsed.hostname in ("www.xbiquge.info", "xbiquge.info"):
+            alternative = ("xbiquge.info" if parsed.hostname == "www.xbiquge.info"
+                           else "www.xbiquge.info")
+            backup_url = parsed._replace(netloc=alternative).geturl()
+            response = session.get(backup_url, timeout=(10, 25), **kwargs)
     response.raise_for_status()
     if not response.encoding or response.encoding.lower() == "iso-8859-1":
         response.encoding = response.apparent_encoding
@@ -279,7 +287,7 @@ def chapter(session, chapter_url):
         visited.add(current)
         soup = _soup(session, current)
         node = next((soup.select_one(sel) for sel in (
-            "#content", "#chaptercontent", ".read-content", ".content", "#txt"
+            "article.font_max", "#content", "#chaptercontent", ".read-content", ".content", "#txt", "article.readtext"
         ) if soup.select_one(sel)), None)
         if node is None:
             raise ValueError("无法找到章节正文容器")
