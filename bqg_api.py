@@ -160,19 +160,36 @@ def _safe_url(href, base=BASE):
 
 
 def _soup(session, url, **kwargs):
-    """Fetch HTML, retrying a transient 502/503/504 via the site's other official host."""
-    response = session.get(url, timeout=(10, 25), **kwargs)
-    if getattr(response, "status_code", 200) in (502, 503, 504):
-        parsed = urlparse(url)
-        if parsed.hostname in ("www.xbiquge.info", "xbiquge.info"):
-            alternative = ("xbiquge.info" if parsed.hostname == "www.xbiquge.info"
-                           else "www.xbiquge.info")
-            backup_url = parsed._replace(netloc=alternative).geturl()
-            response = session.get(backup_url, timeout=(10, 25), **kwargs)
-    response.raise_for_status()
-    if not response.encoding or response.encoding.lower() == "iso-8859-1":
-        response.encoding = response.apparent_encoding
-    return BeautifulSoup(response.text, "lxml")
+    """Fetch HTML with one alternate-host attempt for transient gateway/network failures."""
+    import requests
+
+    validated = _safe_url(url)
+    parts = urlparse(validated)
+    # The site advertises some HTTP chapter links; always prefer TLS.
+    primary = parts._replace(scheme="https").geturl()
+    backup_host = ("xbiquge.info" if parts.hostname == "www.xbiquge.info"
+                   else "www.xbiquge.info")
+    backup = parts._replace(scheme="https", netloc=backup_host).geturl()
+    last_error = None
+    for candidate in (primary, backup):
+        try:
+            response = session.get(candidate, timeout=(8, 18), **kwargs)
+            # Only transient failures warrant a second host attempt.
+            if response.status_code in (429, 500, 502, 503, 504, 520, 521, 522, 523, 524):
+                last_error = requests.HTTPError(
+                    f"HTTP {response.status_code} at {candidate}", response=response
+                )
+                continue
+            response.raise_for_status()
+            final = urlparse(response.url) if getattr(response, "url", None) else urlparse(candidate)
+            if final.hostname not in ("www.xbiquge.info", "xbiquge.info"):
+                raise ValueError("章节请求被重定向至非目标域名")
+            if not response.encoding or response.encoding.lower() == "iso-8859-1":
+                response.encoding = response.apparent_encoding
+            return BeautifulSoup(response.text, "lxml")
+        except requests.RequestException as exc:
+            last_error = exc
+    raise last_error or ValueError("无法读取 HTML 页面")
 
 
 def _catalog_root(book_url):
