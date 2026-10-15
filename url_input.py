@@ -4,7 +4,7 @@
 
 与 `novel_downloader` 的 `if __name__` 中历史逻辑一致，供测试直接导入。
 """
-DEFAULT_HOST_BOOK = "https://m.bqg92.com"
+DEFAULT_HOST_BOOK = "https://www.xbiquge.info"
 
 
 def normalize_target_url(s: str) -> str:
@@ -20,7 +20,7 @@ def normalize_target_url(s: str) -> str:
     if not s:
         return s
     if s.isdigit():
-        return f"{DEFAULT_HOST_BOOK}/book/{s}/"
+        raise ValueError("新站请先用 --search 查询并提供完整目录 URL")
     # 全角空格等已 strip；仍可能含前导零或纯数字子串
     if not s.startswith("http"):
         return "https://" + s
