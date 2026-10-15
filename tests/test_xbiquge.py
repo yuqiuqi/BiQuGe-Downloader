@@ -1,5 +1,5 @@
 import pytest
-from xbiquge import search, catalog, chapter, _safe_url
+from bqg_api import search, catalog, chapter, _safe_url
 
 class Response:
     encoding = "utf-8"
