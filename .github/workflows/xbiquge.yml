@@ -1,0 +1,55 @@
+name: XBiQuGe Search and Download
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '第一步 search 搜索候选；第二步 download 下载确认的目录 URL'
+        type: choice
+        options: [search, download]
+        required: true
+      keyword:
+        description: '书名、作者或拼音（search 模式）'
+        required: false
+        type: string
+      book_url:
+        description: '从搜索结果中选择并粘贴目录 URL（download 模式）'
+        required: false
+        type: string
+      workers:
+        description: '下载并发数（1-10）'
+        default: '5'
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  novel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Search or download
+        env:
+          MODE: ${{ inputs.mode }}
+          KEYWORD: ${{ inputs.keyword }}
+          BOOK_URL: ${{ inputs.book_url }}
+          WORKERS: ${{ inputs.workers }}
+        run: |
+          if [ "$MODE" = search ]; then
+            python xbiquge_cli.py search --keyword "$KEYWORD"
+          else
+            python xbiquge_cli.py download --url "$BOOK_URL" --workers "$WORKERS"
+          fi
+      - name: Upload search results or ZIP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xbiquge-results
+          path: output/
+          if-no-files-found: warn
+          retention-days: 7
