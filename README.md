@@ -13,52 +13,95 @@
 - **TXT 与 ZIP**：本地保存小说 TXT，同时生成包含 TXT 的 ZIP 压缩包。
 - **GitHub Actions**：无需在电脑上配置 Python 环境，手动运行工作流并下载结果。
 
-## GitHub Actions 使用教程（推荐）
+## GitHub Actions 使用教程（推荐，无需安装 Python）
 
-进入 [仓库 Actions 页面](https://github.com/yuqiuqi/BiQuGe-Downloader/actions)，在左侧选择 **Novel Downloader**，点击 **Run workflow**，分支选择 **main**。
+**入口：[点击打开 Novel Downloader 工作流](https://github.com/yuqiuqi/BiQuGe-Downloader/actions/workflows/manual_download.yml)**
 
-当前工作流需要运行 **两次**：第一次搜索，第二次下载。搜索结果不会自动变成下拉菜单，需要手动复制目标小说的目录 URL。
+整个过程是 **搜索 → 从候选列表选书 → 下载 ZIP**。目前 GitHub Actions 无法在同一次手动运行中动态弹出搜索候选，因此需要**分别点击两次 Run workflow**。
 
-### 第一步：搜索小说
+### 0. 打开运行界面
 
-| 参数 | 填写内容 |
-| --- | --- |
-| `mode` | `search` |
-| `keyword` | 小说名称、作者或拼音，例如 `三体` |
-| `novel_id` | 留空 |
-| `workers` | `5`（搜索时不使用） |
+1. 登录 GitHub，进入本仓库顶部的 **Actions** 标签。
+2. 在左侧 **All workflows** 下点击 **Novel Downloader**。
+3. 点击页面右侧的 **Run workflow** 按钮。
+4. 在 **Use workflow from** 中选择 **Branch: main**。
+5. 根据下面的搜索或下载步骤填写参数，再点击弹窗底部的绿色 **Run workflow**。
 
-点击 **Run workflow**。任务结束后：
+> 如果看不到 **Run workflow**，确认已登录、有权运行该仓库的工作流、工作流存在于默认分支且仓库 Actions 已启用。
 
-1. 打开该次运行记录，在 **Search or download** 步骤日志中查看候选列表。
-2. 或在页面底部 **Artifacts** 中下载 **novel-results**，解压后查看 `candidates.json`。
-3. 从候选列表中确认书名、作者，复制所选作品的完整 `url`。
+### 1. 第一次运行：搜索小说
 
-### 第二步：下载所选小说
+选择 `mode = search`，填写关键词：
 
-再次点击 **Run workflow**：
+| 界面字段 | 示例值 | 说明 |
+| --- | --- | --- |
+| **mode** | `search` | 搜索模式 |
+| **keyword** | `三体` | 可输入书名、作者或拼音；匹配情况取决于网站 |
+| **novel_id** | *留空* | 搜索时不用填 |
+| **workers** | `5` | 搜索时不生效，保留默认值 |
 
-| 参数 | 填写内容 |
-| --- | --- |
-| `mode` | `download` |
-| `keyword` | 留空 |
-| `novel_id` | 第一步复制的**完整小说目录 URL** |
-| `workers` | `5`（默认，可修改） |
+提交后，GitHub Actions 列表会出现一条新的运行记录（可能先显示黄色等待图标）。点击该记录，等待任务执行结束。
 
-**URL 格式示例**：`https://www.xbiquge.info/12/345/`（仅演示格式，不代表真实书籍）。
+**查看搜索结果有两种方式：**
 
-运行成功后，在 **Artifacts → novel-results** 下载 GitHub 打包的工作流附件。附件内部会包含程序生成的 `小说名.zip`；再解压一次即可获取小说 TXT。
+1. **直接看日志**：点击 `download` 任务，再展开 **Search or download** 步骤。日志中会打印候选书籍 JSON，包含 `title`、`author`、`status`、`url` 等字段（字段可能为空）。
+2. **下载候选列表**：回到该次运行记录的概览页，在底部 **Artifacts** 找到 **novel-results**，下载并解压，打开 `candidates.json`。
 
-**注意：** 参数名 `novel_id` 是原工作流沿用的名称，**目前应填写完整目录 URL，而不是纯数字 ID**。旧站书号与新站目录路径不一定对应。
+候选结果结构示意（**仅示意，不是真实搜索结果**）：
 
-### 为什么没有开始下载？
+```json
+[
+  {
+    "title": "示例小说",
+    "author": "示例作者",
+    "status": "连载",
+    "url": "https://www.xbiquge.info/12/345/"
+  }
+]
+```
 
-当前工作流包含两个任务：
+核对书名和作者后，**复制选中作品的完整 `url`**，下一步要用到它。
 
-1. `test`：安装依赖并运行 `pytest -q`。
-2. `download`：只有 `test` 通过后才执行搜索或下载，并上传产物。
+### 2. 第二次运行：下载小说
 
-如果任务停在 `test`，请先打开失败步骤查看测试日志；如果 `Search or download` 失败，检查关键词、目录 URL、网站是否可访问及页面结构。工作流会在搜索/下载任务结束后尝试上传已经生成的文件，但失败时不保证有完整 ZIP。
+回到 [Novel Downloader 工作流页面](https://github.com/yuqiuqi/BiQuGe-Downloader/actions/workflows/manual_download.yml)，再次点击 **Run workflow**，仍选择 **main**，填写：
+
+| 界面字段 | 示例值 | 说明 |
+| --- | --- | --- |
+| **mode** | `download` | 下载模式 |
+| **keyword** | *留空* | 下载时不用填 |
+| **novel_id** | `https://www.xbiquge.info/12/345/` | 粘贴第一步选中的**完整目录 URL** |
+| **workers** | `5` | 下载并发线程数，建议先用默认值 |
+
+> **重点：`novel_id` 虽然叫“ID”，但现在必须填完整的小说目录 URL，不能只填数字书号。** 表格中的 URL 仅演示格式，请换成实际搜索结果里的 URL。
+
+提交后打开新的运行记录，等待 `test` 和 `download` 两个任务执行完毕。
+
+### 3. 下载 TXT / ZIP 文件
+
+1. 打开**第二次运行（download）**的记录。
+2. 向下找到 **Artifacts** 区域，点击 **novel-results**。
+3. GitHub 会先下载一个用于传输 Artifact 的 ZIP 压缩包。
+4. 解压后，找到程序生成的 **`小说名.zip`**；再次解压即可获得 **`小说名.txt`**。
+
+因此看到**两层 ZIP 是正常的**：外层由 GitHub Artifacts 生成，内层由小说下载程序生成。
+
+### 4. 运行失败时怎么排查？
+
+| 现象 | 检查位置 | 可能原因或处理方法 |
+| --- | --- | --- |
+| 点击 Run workflow 后一直等待 | Actions 运行记录 | 等待 GitHub 分配 runner；检查 Actions 是否启用 |
+| `test` 任务显示红叉 | `test` → `pytest -q` | 自动测试未通过，`download` 会被跳过；需先修复测试 |
+| 搜索没有候选结果 | `download` → `Search or download` | 关键词无结果、网站无法访问或搜索页面结构变化；尝试完整书名或作者 |
+| 下载任务失败 | `download` → `Search or download` | 目录 URL 不正确、网站限流、章节页面结构变化或网络错误 |
+| 没有 Artifacts | 运行记录底部 | `download` 未执行或没有生成符合上传规则的文件 |
+| ZIP 缺少章节 | 任务日志及 TXT 内容 | 当前失败章节处理尚不完善，需核对完整性 |
+
+**工作流执行顺序：** 每次运行都会先执行 `test`（安装依赖、运行 `pytest -q`），测试通过后才执行名为 `download` 的任务。**即使 `mode=search`，执行搜索的任务也叫 `download`，这是工作流的内部任务名，不表示正在下载小说。**
+
+搜索/下载任务中，`upload-artifact` 步骤设置为 `if: always()`，因此即使该任务中的命令失败，也会尝试上传已经生成的 `*.zip` 或 `candidates.json`；但如果前置测试失败，下载任务根本不会启动，也不会生成这些文件。
+
+> **当前版本说明：** 新站在线搜索和下载尚未完成端到端验证。如果首次运行失败，请在对应运行记录里展开红色步骤，复制错误日志用于排查。不要仅凭任务产生了 ZIP 就认定所有章节都完整。
 
 ## 本地运行
 
