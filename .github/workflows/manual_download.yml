@@ -1,21 +1,25 @@
 name: Novel Downloader
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('{0} | {1}', inputs.mode, inputs.mode == 'search' && inputs.keyword || inputs.novel_id) || 'Unit tests' }}
 on:
   pull_request:
   workflow_dispatch:
     inputs:
       mode:
+        description: '第1次选 search 搜索候选；第2次选 download 下载选中目录。详见 README'
         type: choice
         options: [search, download]
+        default: search
         required: true
       keyword:
-        description: '书名、作者或拼音'
+        description: '仅 search 填：书名/作者/拼音（如 三体）；结果在日志及 candidates.json'
         type: string
         required: false
       novel_id:
-        description: '选中的新站目录 URL'
+        description: '仅 download 填完整目录URL：/11/11549/ 或 /11/11549/index_1.html；不可填纯数字或章节URL'
         type: string
         required: false
       workers:
+        description: '仅 download 生效；并发下载线程数，建议 5（范围 1～64）'
         type: string
         default: '5'
         required: true
