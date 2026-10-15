@@ -239,6 +239,8 @@ def catalog(session, book_url):
             except (ValueError, TypeError):
                 continue  # External links are ordinary on these pages.
             path = urlparse(url).path
+            # Drop query/fragment from catalog navigation to prevent anchor loops.
+            url = url.split("#", 1)[0].split("?", 1)[0]
             if path.startswith(book_path) and CHAPTER_RE.fullmatch(path):
                 title = link.get_text(" ", strip=True)
                 if title and url not in chapters:
@@ -260,18 +262,46 @@ def catalog(session, book_url):
 
 
 def chapter(session, chapter_url):
+    """Join linked pagination of one chapter, without following the next chapter."""
     url = _safe_url(chapter_url)
-    if not CHAPTER_RE.fullmatch(urlparse(url).path):
+    match = CHAPTER_RE.fullmatch(urlparse(url).path)
+    if not match:
         raise ValueError("无效的章节地址")
-    soup = _soup(session, url)
-    node = next((soup.select_one(sel) for sel in (
-        "#content", "#chaptercontent", ".read-content", ".content", "#txt"
-    ) if soup.select_one(sel)), None)
-    if node is None:
-        raise ValueError("无法找到章节正文容器")
-    for tag in node.select("script,style,ins"):
-        tag.decompose()
-    text = node.get_text("\n", strip=True)
-    if len(text.strip()) < 20:
-        raise ValueError("章节正文过短，可能被拦截")
-    return text
+    chapter_id = match.group(3)
+    book_prefix = "/" + match.group(1) + "/" + match.group(2) + "/"
+    page_re = re.compile(r"^" + re.escape(book_prefix + chapter_id) + r"(?:_\d+)?\.html$")
+    visited = set()
+    chunks = []
+    current = url
+    for _ in range(30):
+        if current in visited:
+            raise ValueError("检测到章节翻页循环")
+        visited.add(current)
+        soup = _soup(session, current)
+        node = next((soup.select_one(sel) for sel in (
+            "#content", "#chaptercontent", ".read-content", ".content", "#txt"
+        ) if soup.select_one(sel)), None)
+        if node is None:
+            raise ValueError("无法找到章节正文容器")
+        for tag in node.select("script,style,ins"):
+            tag.decompose()
+        text = node.get_text("\n", strip=True)
+        if len(text.strip()) < 20:
+            raise ValueError("章节正文过短，可能被拦截")
+        chunks.append(text)
+        next_url = None
+        for link in soup.select("a[href]"):
+            label = link.get_text(" ", strip=True)
+            if "下一页" not in label and "下页" not in label:
+                continue
+            try:
+                candidate = _safe_url(link["href"], current)
+            except (ValueError, TypeError):
+                continue
+            if page_re.fullmatch(urlparse(candidate).path) and candidate != current:
+                next_url = candidate
+                break
+        if not next_url:
+            return "\n".join(chunks)
+        current = next_url
+    raise ValueError("章节翻页超过 30 页，已停止下载")
