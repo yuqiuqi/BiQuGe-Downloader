@@ -74,46 +74,47 @@ jobs:
             candidates.json
           if-no-files-found: warn
 
+
   chapter_probe:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - run: pip install requests beautifulsoup4 lxml
-      - name: Probe one real chapter (metadata only)
+      - name: Probe multiple chapters, metadata only
         run: |
           python - <<'PY'
-          import re
-          from urllib.parse import urljoin, urlparse
-          import requests
+          from urllib.parse import urljoin,urlparse
+          import re,requests
           from bs4 import BeautifulSoup
-          root = 'https://www.xbiquge.info/11/11549/index_1.html'
-          s = requests.Session()
-          s.headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/125.0 Safari/537.36'
-          for url in [root]:
-              try:
-                  response = s.get(url, timeout=20)
-                  print('CATALOG',response.status_code,response.url,'bytes',len(response.content),'title',BeautifulSoup(response.text,'lxml').title,flush=True)
-                  response.raise_for_status()
-                  soup = BeautifulSoup(response.content,'lxml')
-                  chapters = [urljoin(url,a['href']) for a in soup.select('a[href]') if re.fullmatch(r'/11/11549/[0-9]+\.html', urlparse(urljoin(url,a['href'])).path)]
-                  print('CHAPTER_LINKS',len(chapters),flush=True)
-                  if not chapters: raise RuntimeError('No chapter links detected')
-                  chapter_url = chapters[0]
-                  response = s.get(chapter_url, timeout=20)
-                  response.raise_for_status()
-                  print('CHAPTER',response.status_code,response.url,'bytes',len(response.content),'ctype',response.headers.get('Content-Type'),flush=True)
-                  page = BeautifulSoup(response.content,'lxml')
-                  print('TITLE',page.title.get_text(' ',strip=True)[:160] if page.title else None,flush=True)
-                  for sel in ['#content','#chaptercontent','.read-content','.content','#txt','#article','#BookText','.txt','article','main','div[id*=content]']:
-                      node=page.select_one(sel)
-                      print('SELECTOR',sel,'length',len(node.get_text(' ',strip=True)) if node else 'missing',flush=True)
-                  print('LARGE_TEXT_ELEMENTS',[(x.name,x.get('id'),x.get('class'),len(x.get_text(' ',strip=True))) for x in sorted(page.select('div,article,main,section'),key=lambda n:len(n.get_text(' ',strip=True)),reverse=True)[:8]],flush=True)
-              except Exception as exc:
-                  print('PROBE_ERROR',type(exc).__name__,str(exc)[:500],flush=True)
-                  raise
+          base='https://www.xbiquge.info/11/11549/index_1.html'
+          session=requests.Session()
+          session.headers.update({'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36','Referer':base})
+          r=session.get(base,timeout=18);r.raise_for_status()
+          soup=BeautifulSoup(r.content,'lxml')
+          links=[]
+          for a in soup.select('a[href]'):
+              u=urljoin(base,a['href'])
+              if re.fullmatch(r'/11/11549/\d+\.html',urlparse(u).path) and u not in links:
+                  links.append(u)
+          print('CATALOG_STATUS',r.status_code,'CHAPTER_LINKS',len(links),flush=True)
+          for url in links[:3]:
+              for host in ['www.xbiquge.info','xbiquge.info']:
+                  target=url.replace('www.xbiquge.info',host)
+                  try:
+                      r=session.get(target,timeout=15)
+                      s=BeautifulSoup(r.content,'lxml')
+                      title=s.title.get_text(' ',strip=True)[:110] if s.title else ''
+                      print('CHAPTER_RESPONSE','path',urlparse(r.url).path,'host',host,'status',r.status_code,'bytes',len(r.content),'ctype',r.headers.get('Content-Type'),'title',title,flush=True)
+                      for sel in ['#content','#chaptercontent','.read-content','.content','#txt','#article','#BookText','article','main']:
+                          n=s.select_one(sel)
+                          if n: print('MATCHED_SELECTOR',sel,'text_len',len(n.get_text(' ',strip=True)),flush=True)
+                      if r.ok:
+                          print('TOP_DIVS',[(x.name,x.get('id'),x.get('class'),len(x.get_text(' ',strip=True))) for x in sorted(s.select('div,article,main'),key=lambda n:len(n.get_text(' ',strip=True)),reverse=True)[:5]],flush=True)
+                  except Exception as exc:
+                      print('FETCH_EXCEPTION',host,type(exc).__name__,str(exc)[:150],flush=True)
           PY
