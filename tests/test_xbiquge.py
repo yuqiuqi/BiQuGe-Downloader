@@ -130,3 +130,40 @@ def test_unsupported_download_entry_urls(url):
     from bqg_api import _catalog_root
     with pytest.raises(ValueError):
         _catalog_root(url)
+
+
+def test_live_style_article_font_max_content():
+    html = (
+        '<html><head><title>第1968章</title></head>'
+        '<body><div class="container"><article class="font_max">'
+        '这是一段与真实网站正文容器相同结构的章节文本。'
+        '保留章节内容，并且不误把外围页面当作小说正文。'
+        '</article></div><div id="footer">网站导航信息</div></body></html>'
+    )
+    result = chapter(Session(html), "https://www.xbiquge.info/11/11549/1163958.html")
+    assert "这是一段与真实网站正文容器相同结构" in result
+    assert "网站导航信息" not in result
+
+
+def test_gateway_error_fails_over_to_official_alternate_host():
+    url = "https://www.xbiquge.info/11/11549/1163959.html"
+    backup = "https://xbiquge.info/11/11549/1163959.html"
+    html = "<article class='font_max'>这里是通过备用域名成功获取的一段章节正文内容。</article>"
+
+    class GatewayResponse(Response):
+        status_code = 502
+        def raise_for_status(self):
+            raise RuntimeError("gateway 502")
+
+    class GatewaySession:
+        def __init__(self):
+            self.urls = []
+
+        def get(self, url, **kwargs):
+            self.urls.append(url)
+            return GatewayResponse("") if url.startswith("https://www.") else Response(html)
+
+    session = GatewaySession()
+    text = chapter(session, url)
+    assert "备用域名" in text
+    assert session.urls == [url, backup]
