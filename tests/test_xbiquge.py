@@ -105,3 +105,28 @@ def test_multi_page_chapter_includes_all_pages():
     text = chapter(PageSession(), base + "301.html")
     assert "第一页" in text and "第二页" in text
     assert text.index("第一页") < text.index("第二页")
+
+
+@pytest.mark.parametrize("path", [
+    "/11/11549/",
+    "/11/11549/index.html",
+    "/11/11549/index_1.html",
+    "/11/11549/index_25.html",
+])
+def test_supported_download_entry_urls(path):
+    from bqg_api import _catalog_root
+    assert _catalog_root("https://www.xbiquge.info" + path) == (
+        "https://www.xbiquge.info/11/11549/"
+    )
+
+
+@pytest.mark.parametrize("url", [
+    "https://www.xbiquge.info/11/11549/301.html",
+    "https://www.xbiquge.info/book/11549/",
+    "https://www.xbiquge.info/",
+    "https://evil.example/11/11549/",
+])
+def test_unsupported_download_entry_urls(url):
+    from bqg_api import _catalog_root
+    with pytest.raises(ValueError):
+        _catalog_root(url)
