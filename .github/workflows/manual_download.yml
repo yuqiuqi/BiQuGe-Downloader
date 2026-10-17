@@ -1,6 +1,8 @@
 name: Novel Downloader
 run-name: ${{ github.event_name == 'workflow_dispatch' && format('{0} | {1}', inputs.mode, inputs.mode == 'search' && inputs.keyword || inputs.novel_id) || 'Unit tests' }}
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
     inputs:
